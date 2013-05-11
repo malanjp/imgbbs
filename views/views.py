@@ -1,10 +1,10 @@
 import os, re
 from datetime import timedelta
+import math
 from PIL import Image
 
 from wheezy.web.handlers import BaseHandler
-from config import session
-from config import cached
+from config import session, cached, SELECT_LIMIT
 from models.upimage import UpImage
 from repositories.upimage import Repository
 from validations.upimage import upimage_validator
@@ -22,14 +22,25 @@ class ListHandler(BaseHandler):
 
     @handler_transforms(gzip_transform(compress_level=9, min_length=250))
     def get(self, upimage=None):
+        page = self.route_args.get('page', 1)
+
         with session() as db:
             repo = Repository(db)
-            upimages = repo.list_upimages()   # list
+
+            count = repo.get_count()
+            pages = self.pagecount(count, SELECT_LIMIT)
+
+            upimages = repo.list_upimages(page)   # list
             upimage = upimage or UpImage()   # add form
+
             response = self.render_response('list.mako',
-                upimages=upimages, upimage=upimage)
+                    upimages=upimages, upimage=upimage, count=count, page=page, pages=pages)
             response.cache_dependency = ('d_list', )
             return response
+
+    def pagecount(self, count, page):
+        pages = math.ceil(count / SELECT_LIMIT)
+        return pages
 
     def post(self):
         if not self.validate_xsrf_token():
@@ -54,6 +65,7 @@ class ListHandler(BaseHandler):
         if (not self.try_update_model(upimage)
                 or not self.validate(upimage, upimage_validator)):
             return self.get(upimage)
+        print(upimage.title)
 
         with session() as db:
             repo = Repository(db)
@@ -93,7 +105,7 @@ class ListHandler(BaseHandler):
 class DetailHandler(BaseHandler):
 
     @handler_transforms(gzip_transform(compress_level=9, min_length=250))
-    def get(self):
+    def get(self, filename=None):
         filename = self.route_args['filename']
         with session() as db:
             repo = Repository(db)
@@ -102,7 +114,43 @@ class DetailHandler(BaseHandler):
             response.cache_dependency = ('d_list', )
             return response
 
+    def post(self):
+        if not self.validate_xsrf_token():
+            return self.redirect_for(self.route_args.route_name)
 
+        upimage = UpImage()
+        if (not self.try_update_model(upimage)):
+            return self.redirect_for(self.route_args.route_name)
+
+        if upimage.delkey is '':
+            return self.redirect_for(self.route_args.route_name)
+
+        filename = self.route_args['filename']
+        with session() as db:
+            repo = Repository(db)
+            res = repo.delete_upimages(upimage)
+            if res:
+                return self.redirect_for('list')
+            else:
+                return self.redirect_for(self.route_args.route_name)
+
+
+class AboutHandler(BaseHandler):
+
+    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    def get(self):
+        response = self.render_response('about.mako')
+        response.cache_dependency = ('d_list', )
+        return response
+
+
+class ContactHandler(BaseHandler):
+
+    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    def get(self):
+        response = self.render_response('contact.mako')
+        response.cache_dependency = ('d_list', )
+        return response
 
 
 

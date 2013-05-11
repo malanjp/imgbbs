@@ -33,3 +33,5 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+contents/static/upload/*

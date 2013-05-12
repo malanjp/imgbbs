@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import timedelta
+from hashlib import sha1
 from wheezy.html.ext.mako import widget_preprocessor
 from wheezy.html.ext.template import WhitespaceExtension
 from wheezy.html.ext.template import WidgetExtension
@@ -13,6 +14,7 @@ from wheezy.web.handlers import file_handler
 from wheezy.caching.memory import MemoryCache
 from wheezy.caching.patterns import Cached
 from wheezy.security.crypto import Ticket
+from wheezy.security.crypto.comp import aes128
 
 
 def session():
@@ -66,7 +68,7 @@ options.update({
         'ticket': Ticket(
             max_age=1200,
             salt='Hksdf_df1lka+lA',
-            options=options),
+            digestmod=sha1),
 
         'AUTH_COOKIE': '_a',
         'AUTH_COOKIE_DOMAIN': None,

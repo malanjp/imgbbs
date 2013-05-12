@@ -12,6 +12,7 @@ from wheezy.web.templates import MakoTemplate
 from wheezy.web.handlers import file_handler
 from wheezy.caching.memory import MemoryCache
 from wheezy.caching.patterns import Cached
+from wheezy.security.crypto import Ticket
 
 
 def session():
@@ -31,6 +32,8 @@ engine = Engine(
             WhitespaceExtension(),
             WidgetExtension(),
 ])
+SELECT_LIMIT = 20
+
 engine.global_vars.update({
     'format_value': format_value,
     'h': html_escape,
@@ -53,4 +56,23 @@ options = {
     'XSRF_NAME': '_x',
     'RESUBMISSION_NAME': '_c'
 }
+
+options.update({
+        'CRYPTO_ENCRYPTION_KEY': '_WsoFT.AbI+asdfJ',
+        'CRYPTO_VALIDATION_KEY': 'Lf9awLiLAD_SD+ih'
+})
+
+options.update({
+        'ticket': Ticket(
+            max_age=1200,
+            salt='Hksdf_df1lka+lA',
+            options=options),
+
+        'AUTH_COOKIE': '_a',
+        'AUTH_COOKIE_DOMAIN': None,
+        'AUTH_COOKIE_PATH': '',
+        'AUTH_COOKIE_SECURE': False,
+})
+
+
 

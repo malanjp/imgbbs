@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <title>ろだたそ〜</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="「ろだたそ〜」は、できたてホヤホヤの自由に使える画像アップローダ（うｐろだ）です。">
+    <meta name="keywords" content="うｐろだ,画像,掲示板,ろだたそ〜,エロ,虹,二次,ニジ,二次元,虹色">
+    <meta name="robots" content="index,follow">
+    <link rel="home" href="http://ec2-54-242-152-9.compute-1.amazonaws.com/" title="ろだたそ〜">
+    <link rel="index" href="http://ec2-54-242-152-9.compute-1.amazonaws.com/" title="ろだたそ〜">
     <link rel="shortcut icon" href="/static/img/favicon.ico">
     <!-- Loading Bootstrap -->
     <link href="/static/uiset/css/bootstrap.min.css" rel="stylesheet">
@@ -11,7 +17,8 @@
     <link href="/static/uiset/css/flat-ui.css" rel="stylesheet">
     <link href="${path_for('static', path='css/site.css')}" type="text/css" rel="stylesheet" />
     <link href="/static/uiset/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+##<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script type="text/javascript" src="${path_for('static', path='js/site.js')}"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>

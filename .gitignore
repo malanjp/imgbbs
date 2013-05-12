@@ -35,3 +35,4 @@ nosetests.xml
 .pydevproject
 
 contents/static/upload/*
+.python-version

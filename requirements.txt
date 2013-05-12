@@ -1,7 +1,9 @@
+Cython==0.19.1
 Jinja2==2.6
 Mako==0.8.0
 MarkupSafe==0.15
 Pillow==2.0.0
+PyMySQL3==0.5
 distribute==0.6.34
 gunicorn==0.17.4
 wheezy.caching==0.1.90

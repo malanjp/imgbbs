@@ -1,5 +1,5 @@
 CREATE TABLE upimage (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     created_on TIMESTAMP NOT NULL,
     author TEXT,
     title TEXT,

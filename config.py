@@ -1,4 +1,7 @@
-import sqlite3
+#import sqlite3
+#import mysql.connector
+import pymysql
+import pymysql.cursors
 from datetime import timedelta
 from hashlib import sha1
 from wheezy.html.ext.mako import widget_preprocessor
@@ -18,8 +21,13 @@ from wheezy.security.crypto.comp import aes128
 
 
 def session():
-    return sqlite3.connect('imgbbs.db',
-                           detect_types=sqlite3.PARSE_DECLTYPES)
+#    return sqlite3.connect('imgbbs.db',
+#                           detect_types=sqlite3.PARSE_DECLTYPES)
+#    connect = mysql.connector.connect(db="imgbbs",
+#                                   host="localhost", port=3306, user="imgbbs", passwd="_WioT.A")
+#    return connect.cursor()
+    return pymysql.connect(db='imgbbs', user='imgbbs', passwd='_WioT.A', charset='utf8')
+
 
 # secret key
 secretkey = 'faw_iodjnf+ozx90i2j+lkfals1'

@@ -18,12 +18,8 @@ if __name__ == '__main__':
     from wsgiref.simple_server import make_server
     try:
         host = socket.gethostname() 
-        if host == 'shibata-mba.local':
-            print('Visit http://localhost:8080/')
-            make_server('', 8080, main).serve_forever()
-        else:
-            print('Visit http://0.0.0.0:80/')
-            make_server('0.0.0.0', 80, main).serve_forever()
+        print('Visit http://localhost:8080/')
+        make_server('', 8080, main).serve_forever()
     except KeyboardInterrupt:
         pass
     print('\nThanks!')

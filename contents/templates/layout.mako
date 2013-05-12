@@ -8,6 +8,7 @@
     <meta name="description" content="「ろだたそ〜」は、できたてホヤホヤの自由に使える画像アップローダ（うｐろだ）です。">
     <meta name="keywords" content="うｐろだ,画像,掲示板,ろだたそ〜,エロ,虹,二次,ニジ,二次元,虹色">
     <meta name="robots" content="index,follow">
+    <meta name="google-site-verification" content="XTMyvkrcnI9Aj0X3eoDN_bs88awcbIzk1PNg5HEsPGo" />
     <link rel="home" href="http://ec2-54-242-152-9.compute-1.amazonaws.com/" title="ろだたそ〜">
     <link rel="index" href="http://ec2-54-242-152-9.compute-1.amazonaws.com/" title="ろだたそ〜">
     <link rel="shortcut icon" href="/static/img/favicon.ico">

@@ -7,4 +7,4 @@ CREATE TABLE upimage (
     img TEXT NOT NULL,
     thumb TEXT NOT NULL,
     delkey TEXT
-);
+) CHARACTER SET 'utf8';

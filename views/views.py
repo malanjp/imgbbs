@@ -24,19 +24,20 @@ class ListHandler(BaseHandler):
     def get(self, upimage=None):
         page = self.route_args.get('page', 1)
 
-        with session() as db:
-            repo = Repository(db)
+        #with session() as db:
+        con = session()
+        repo = Repository(con)
 
-            count = repo.get_count()
-            pages = self.pagecount(count, SELECT_LIMIT)
+        count = repo.get_count()
+        pages = self.pagecount(count, SELECT_LIMIT)
 
-            upimages = repo.list_upimages(page)   # list
-            upimage = upimage or UpImage()   # add form
+        upimages = repo.list_upimages(page)   # list
+        upimage = upimage or UpImage()   # add form
 
-            response = self.render_response('list.mako',
-                    upimages=upimages, upimage=upimage, count=count, page=page, pages=pages)
-            response.cache_dependency = ('d_list', )
-            return response
+        response = self.render_response('list.mako',
+                upimages=upimages, upimage=upimage, count=count, page=page, pages=pages)
+        response.cache_dependency = ('d_list', )
+        return response
 
     def pagecount(self, count, page):
         pages = math.ceil(count / SELECT_LIMIT)
@@ -67,12 +68,13 @@ class ListHandler(BaseHandler):
             return self.get(upimage)
         print(upimage.title)
 
-        with session() as db:
-            repo = Repository(db)
-            if not repo.add_upimage(upimage):
-                self.error('Sorry, can not add your image.')
-                return self.get(upimage)
-            db.commit()
+        #with session() as db:
+        con = session()
+        repo = Repository(con)
+        if not repo.add_upimage(upimage):
+            self.error('Sorry, can not add your image.')
+            return self.get(upimage)
+        con.commit()
 
         cached.dependency.delete('d_list')
         return self.see_other_for('list')
@@ -107,12 +109,13 @@ class DetailHandler(BaseHandler):
     @handler_transforms(gzip_transform(compress_level=9, min_length=250))
     def get(self, filename=None):
         filename = self.route_args['filename']
-        with session() as db:
-            repo = Repository(db)
-            upimage = repo.get_upimages(filename)
-            response = self.render_response('detail.mako', upimage=upimage)
-            response.cache_dependency = ('d_list', )
-            return response
+        #with session() as db:
+        con = session()
+        repo = Repository(con)
+        upimage = repo.get_upimages(filename)
+        response = self.render_response('detail.mako', upimage=upimage)
+        response.cache_dependency = ('d_list', )
+        return response
 
     def post(self):
         if not self.validate_xsrf_token():
@@ -126,13 +129,14 @@ class DetailHandler(BaseHandler):
             return self.redirect_for(self.route_args.route_name)
 
         filename = self.route_args['filename']
-        with session() as db:
-            repo = Repository(db)
-            res = repo.delete_upimages(upimage)
-            if res:
-                return self.redirect_for('list')
-            else:
-                return self.redirect_for(self.route_args.route_name)
+        #with session() as db:
+        con = session()
+        repo = Repository(con)
+        res = repo.delete_upimages(upimage)
+        if res:
+            return self.redirect_for('list')
+        else:
+            return self.redirect_for(self.route_args.route_name)
 
 
 class AboutHandler(BaseHandler):

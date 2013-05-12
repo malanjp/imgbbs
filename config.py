@@ -18,7 +18,7 @@ from wheezy.security.crypto.comp import aes128
 
 
 def session():
-    return sqlite3.connect('guestbook.db',
+    return sqlite3.connect('imgbbs.db',
                            detect_types=sqlite3.PARSE_DECLTYPES)
 
 # secret key

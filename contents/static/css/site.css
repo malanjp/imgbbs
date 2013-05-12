@@ -1,17 +1,36 @@
 textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     padding:0;
 }
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    margin-bottom:0;
+}
+select, input[type="file"] {
+    height: 20px;
+}
 
+@media (max-width: 767px) {
+    [class*="span"].pull-right {
+        float: none;
+    }
+}
 
 body {
+}
+.red {
+    color:red;
 }
 .navbar {
     margin-bottom:20px;
 }
+.navbar .brand {
+    margin: 0 auto;
+    text-decoration:none;
+    color:white;
+}
 .row-fluid {
     margin-bottom:30px;
 }
-.red {
+.error {
     color:red;
 }
 label.required {
@@ -19,11 +38,8 @@ label.required {
     color:red;
 }
 form.newinput {
-    width:500px;
-    margin:0 auto;
-}
-.newinput textarea {
-/*    width:350px*/
+    width:380px;
+    margin:0 auto 20px auto;
 }
 .newinput table td {
     width:100px
@@ -53,8 +69,19 @@ input[type=file] {
     text-align:center;
 }
 .image-list li.media {
-    height:240px;
+    height:280px;
     float:left;
 }
-.image-list img {
+.media-list {
+    margin-left:none;
+}
+
+.detail .title {
+    margin:10px 0;
+}
+.detail .author {
+    margin:10px 0;
+}
+.pagination {
+    text-align:center;
 }

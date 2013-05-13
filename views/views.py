@@ -55,7 +55,13 @@ class ViewHandler(BaseHandler):
         # create thumbnail
         img = Image.open(filepath, 'r')
         img.thumbnail((200, 170), Image.ANTIALIAS)
-        img.save(thumbpath, 'JPEG', quality=75, optimize=True)
+        if ext == 'jpg' or ext == 'jpeg':
+            img.save(thumbpath, 'JPEG', quality=75, optimize=True)
+        elif ext == 'png':
+            img.save(thumbpath, 'PNG', quality=75, optimize=True)
+        elif ext == 'gif':
+            img = Image.open(filepath, 'r')
+            img.save(thumbpath)
 
         return (filename, thumbname)
 

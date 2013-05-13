@@ -53,7 +53,6 @@ engine.global_vars.update({
 cache = MemoryCache()
 cached = Cached(cache, time=15 * 60)
 
-
 # options
 options = {
     'render_template': MakoTemplate(
@@ -64,7 +63,8 @@ options = {
     ),
     'http_cache': cache,
     'XSRF_NAME': '_x',
-    'RESUBMISSION_NAME': '_c'
+    'RESUBMISSION_NAME': '_c',
+    'MAX_CONTENT_LENGTH': 1024 * 1024 * 10
 }
 
 options.update({

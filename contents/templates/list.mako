@@ -6,7 +6,7 @@
 
 <%def name="body()">
 
-${widgets.uploadform('list')}
+${widgets.uploadform('list', obj=upimage)}
 
 <div class='span12'>
   <div class='image-list'>

@@ -12,13 +12,16 @@
     <link rel="home" href="http://ec2-54-242-152-9.compute-1.amazonaws.com/" title="しょぼいろだ。">
     <link rel="index" href="http://ec2-54-242-152-9.compute-1.amazonaws.com/" title="しょぼいろだ。">
     <link rel="shortcut icon" href="/static/img/favicon.ico">
+
     <!-- Loading Bootstrap -->
-    <link href="/static/uiset/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${path_for('static', path='uiset/css/bootstrap.min.css')}" rel="stylesheet">
     <!-- Loading Flat UI -->
-    <link href="/static/uiset/css/flat-ui.css" rel="stylesheet">
+    <link href="${path_for('static', path='uiset/css/flat-ui.css')}" rel="stylesheet">
+    <link href="${path_for('static', path='uiset/css/bootstrap-responsive.min.css')}" rel="stylesheet">
     <link href="${path_for('static', path='css/site.css')}" type="text/css" rel="stylesheet" />
-    <link href="/static/uiset/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="${path_for('static', path='uiset/js/bootstrap-modal.js')}"></script>
     <script type="text/javascript" src="${path_for('static', path='js/site.js')}"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
@@ -39,16 +42,11 @@
         </div>
       </div>
       <div class="row-fluid">
-##        <div class="span2">
-##          ${self.sidebar()}
-##        </div>
-##        <div class="span10 pull-right">
         <div class="span12">
           ${self.body()}
         </div>
       </div>
     </div>
-    <script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

@@ -1,4 +1,6 @@
+DROP TABLE IF EXISTS reply;
 DROP TABLE IF EXISTS upimage;
+
 CREATE TABLE upimage (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     created_on TIMESTAMP NOT NULL,
@@ -10,7 +12,6 @@ CREATE TABLE upimage (
     delkey TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS reply;
 CREATE TABLE reply (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     parent_id INTEGER NOT NULL,
@@ -18,8 +19,8 @@ CREATE TABLE reply (
     author TEXT,
     title TEXT,
     message TEXT,
-    img TEXT NOT NULL,
-    thumb TEXT NOT NULL,
+    img TEXT,
+    thumb TEXT,
     delkey TEXT,
     foreign key (`parent_id`)
         references `upimage` (`id`)

@@ -16,6 +16,12 @@ select, input[type="file"] {
 
 body {
 }
+.center {
+    text-align:center;
+}
+.bold {
+    font-weight:bold;
+}
 .red {
     color:red;
 }

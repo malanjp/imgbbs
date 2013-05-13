@@ -67,6 +67,7 @@ aaa
       </fieldset>
     </form>
   ${upimage.error()}
+  <p style='text-align:center'>* JPEG, PNG, GIF で 10MBまで</p>
   </div>
   <div class='span4'></div>
 </div>

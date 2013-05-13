@@ -9,6 +9,7 @@ aaa
 <div class='span12'>
   <div class='span4'></div>
   <div class='span4'>
+    <p class='center bold'>法に触れなければなんでもどうぞ。</p>
     <form action='${path_for('list')}' method='post' enctype='multipart/form-data' class="newinput">
       ${xsrf()}
       <fieldset>
@@ -67,7 +68,7 @@ aaa
       </fieldset>
     </form>
   ${upimage.error()}
-  <p style='text-align:center'>* JPEG, PNG, GIF で 10MBまで</p>
+  <p class='center'>* JPEG, PNG, GIF で 10MBまで</p>
   </div>
   <div class='span4'></div>
 </div>

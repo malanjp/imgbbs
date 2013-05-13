@@ -2,6 +2,7 @@ from wheezy.http import WSGIApplication
 from wheezy.web.middleware import bootstrap_defaults
 from wheezy.web.middleware import path_routing_middleware_factory
 from wheezy.http.middleware import http_cache_middleware_factory
+from wheezy.http.config import bootstrap_http_defaults
 
 from config import options
 from urls import all_urls
@@ -10,6 +11,7 @@ import socket
 
 main = WSGIApplication([
     bootstrap_defaults(url_mapping=all_urls),
+    bootstrap_http_defaults,
     http_cache_middleware_factory,
     path_routing_middleware_factory
 ], options)

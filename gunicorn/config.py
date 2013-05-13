@@ -6,14 +6,14 @@ bind = 'unix:/tmp/gunicorn_imgbbs.sock'
 backlog = 2048
 
 ## Worker Processes
-workers = 1
+workers = 5
 worker_class = 'sync'
-worker_connections = 1000
+worker_connections = 100
 max_requests = 0
 timeout = 30
-keepalive = 2
+keepalive = 15
 
-debug = True
+debug = False
 spew  = False
 
 ## Server Mechanics

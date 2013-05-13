@@ -20,7 +20,7 @@ class Reply(object):
         self.parent_id = parent_id
         self.created_on = created_on or datetime.now()
         self.author = author
-        self.title = title
+#        self.title = title
         self.message = message
         self.img = img
         self.thumb = thumb

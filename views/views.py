@@ -28,6 +28,9 @@ class ViewHandler(BaseHandler):
 
 
     def upimage_preprocess(self, upimage=None, request=None):
+        if not request.files.get('img'):
+            return False
+
         img = request.files['img'][0]
 
         if not self.validate_extension(img):
@@ -42,7 +45,6 @@ class ViewHandler(BaseHandler):
 
     def save_file(self, fieldstrage=None):
         filename = self.generate_filename()
-        print(filename)
         img = self.request.files['img'][0]
         file = img.file
         ext = img.filename.split('.')[-1]
@@ -124,18 +126,21 @@ class ListHandler(ViewHandler):
 class DetailHandler(ViewHandler):
 
     @handler_transforms(gzip_transform(compress_level=9, min_length=250))
-    def get(self, filename=None):
+    def get(self, reply=None):
         id = self.route_args.get('id')
         con = session()
         repo = Repository(con)
+
         upimage = repo.get_upimage(id)
         replies = repo.get_reply(id)
-        response = self.render_response('detail.mako', upimage=upimage, replies=replies)
+        reply = reply or Reply()
+        if not reply.parent_id:
+            reply.parent_id = upimage.id
+
+        response = self.render_response('detail.mako', upimage=upimage, reply=reply, replies=replies)
         response.cache_dependency = ('d_list', )
         return response
 
-
-class ReplyHandler(ViewHandler):
     def post(self):
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)
@@ -145,12 +150,12 @@ class ReplyHandler(ViewHandler):
         if (not self.try_update_model(reply)):
             return self.redirect_for(self.route_args.route_name)
 
-        res = self.reply(reply, self.request)
-        if res:
-            print('hoge')
+        reply = self.reply(reply, self.request)
+        if reply:
+            self.commit_reply(reply)
             return self.redirect_for('detail', id=reply.parent_id)
         else:
-            self.error('<div class="alert alert-error">jpg, png, gif いずれかの拡張子でお願いします</div>')
+            #self.error('<div class="alert alert-error">jpg, png, gif いずれかの拡張子でお願いします</div>')
             return self.get(reply)
 
 
@@ -158,13 +163,18 @@ class ReplyHandler(ViewHandler):
         if not reply:
             return False
 
-        reply = self.upimage_preprocess(reply, self.request)
+        res = self.upimage_preprocess(reply, self.request)
+        if res:
+            reply = res
 
         if (not self.try_update_model(reply)
                 or not self.validate(reply, reply_validator)):
-            print('hoge1')
-            return self.get(reply)
+            return False
 
+        return reply
+
+
+    def commit_reply(self, reply):
         con = session()
         repo = Repository(con)
         res = repo.add_reply(reply)
@@ -189,7 +199,6 @@ class DeleteHandler(ViewHandler):
             if (not self.try_update_model(reply)):
                 return self.redirect_for(self.route_args.route_name)
             res = self.delete_reply(reply)
-            print(reply.parent_id)
             return self.redirect_for('detail', id=reply.parent_id)
 
 

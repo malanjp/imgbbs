@@ -68,14 +68,14 @@ class Repository(object):
     def add_reply(self, reply):
         reply.delkey = self.generate_password(reply.delkey)
         self.db.execute("""
-                INSERT INTO reply (created_on, parent_id, author, title, message, img, thumb, delkey)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """, (reply.created_on, reply.parent_id, reply.author, reply.title, reply.message, reply.img, reply.thumb, reply.delkey))
+                INSERT INTO reply (created_on, parent_id, author, message, img, thumb, delkey)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (reply.created_on, reply.parent_id, reply.author, reply.message, reply.img, reply.thumb, reply.delkey))
         return True
 
     def get_reply(self, parent_id):
         self.db.execute("""
-                SELECT id, parent_id, created_on, author, title, message, img, thumb
+                SELECT id, parent_id, created_on, author, message, img, thumb
                 FROM reply
                 WHERE parent_id = %s
         """, (parent_id,))
@@ -84,10 +84,9 @@ class Repository(object):
                 parent_id=[1],
                 created_on=row[2],
                 author=row[3],
-                title=row[4],
-                message=row[5],
-                img=row[6],
-                thumb=row[7]
+                message=row[4],
+                img=row[5],
+                thumb=row[6]
               ) for row in self.db.fetchall()]
 
     def delete_reply(self, reply):

@@ -11,5 +11,6 @@ all_urls = [
     url('delete/reply/{id}', DeleteHandler, name='delete_reply'),
     url('about', AboutHandler, name='about'),
     url('contact', ContactHandler, name='contact'),
+    url('img/{path:any}', file_handler(root='contents/static/upload/'), name='img'),
     url('static/{path:any}', file_handler(root='contents/static/'), name='static')
 ]

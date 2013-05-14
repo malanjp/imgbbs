@@ -10,8 +10,8 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
 <div class='span4'></div>
 <div class='span4'>
    <div class='detail'>
-    <a href="${path_for('static', path='upload/' + upimage.img)}">
-      <img src="${path_for('static', path='upload/' + upimage.img)}">
+    <a href="${path_for('img', path=upimage.img)}">
+      <img src="${path_for('img', path=upimage.img)}">
     </a>
     <div class='author'>
         <span class='title'>${upimage.title or '無題'}</span>
@@ -49,8 +49,8 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
   %for r in replies:
     <div class='detail'>
       %if r.img:
-      <a href="${path_for('static', path='upload/' + r.img)}">
-        <img src="${path_for('static', path='upload/' + r.img)}">
+      <a href="${path_for('img', path=r.img)}">
+        <img src="${path_for('img', path=r.img)}">
       </a>
       %endif
       <div class='author'>

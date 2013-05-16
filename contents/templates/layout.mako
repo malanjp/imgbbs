@@ -35,6 +35,7 @@
           <div class="container">
             <a class="brand" href="${path_for('list')}">しょぼいろだ。</a>
             <ul class="nav nav-pills pull-right">
+              <li><a href="${path_for('software')}">Software</a></li>
               <li><a href="${path_for('about')}">About</a></li>
               <li><a href="${path_for('contact')}">Contact</a></li>
             </ul>

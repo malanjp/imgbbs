@@ -234,6 +234,14 @@ class DeleteHandler(ViewHandler):
         return res
 
 
+class SoftwareHandler(ViewHandler):
+
+    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    def get(self):
+        response = self.render_response('software.mako')
+        response.cache_dependency = ('d_list', )
+        return response
+
 
 class AboutHandler(ViewHandler):
 

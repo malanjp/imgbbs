@@ -5,7 +5,7 @@ from hashlib import sha1 as sha
 import datetime, time, random
 
 from wheezy.web.handlers import BaseHandler
-from config import session, cached, SELECT_LIMIT
+from config import session, cached, SELECT_LIMIT, default_cache_profile
 from models.upimage import UpImage, Reply
 from repositories.upimage import Repository
 from validations.upimage import upimage_validator, reply_validator
@@ -58,9 +58,9 @@ class ViewHandler(BaseHandler):
         img = Image.open(filepath, 'r')
         img.thumbnail((200, 170), Image.ANTIALIAS)
         if ext == 'jpg' or ext == 'jpeg':
-            img.save(thumbpath, 'JPEG', quality=75, optimize=True)
+            img.save(thumbpath, 'JPEG', quality=50, optimize=True)
         elif ext == 'png':
-            img.save(thumbpath, 'PNG', quality=75, optimize=True)
+            img.save(thumbpath, 'PNG', quality=50, optimize=True)
         elif ext == 'gif':
             img = Image.open(filepath, 'r')
             img.save(thumbpath)
@@ -77,7 +77,8 @@ class ViewHandler(BaseHandler):
 
 class ListHandler(ViewHandler):
 
-    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, upimage=None):
         page = self.route_args.get('page', 1)
 
@@ -92,7 +93,7 @@ class ListHandler(ViewHandler):
 
         response = self.render_response('list.mako',
                 upimages=upimages, upimage=upimage, count=count, page=page, pages=pages)
-        response.cache_dependency = ('d_list', )
+        #response.cache_dependency = ('d_list', )
         return response
 
     def pagecount(self, count, page):
@@ -125,7 +126,8 @@ class ListHandler(ViewHandler):
 
 class DetailHandler(ViewHandler):
 
-    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, reply=None):
         id = self.route_args.get('id')
         con = session()
@@ -138,7 +140,7 @@ class DetailHandler(ViewHandler):
             reply.parent_id = upimage.id
 
         response = self.render_response('detail.mako', upimage=upimage, reply=reply, replies=replies)
-        response.cache_dependency = ('d_list', )
+        #response.cache_dependency = ('d_detail', )
         return response
 
     def post(self):
@@ -236,28 +238,31 @@ class DeleteHandler(ViewHandler):
 
 class SoftwareHandler(ViewHandler):
 
-    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self):
         response = self.render_response('software.mako')
-        response.cache_dependency = ('d_list', )
+        #response.cache_dependency = ('d_software', )
         return response
 
 
 class AboutHandler(ViewHandler):
 
-    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self):
         response = self.render_response('about.mako')
-        response.cache_dependency = ('d_list', )
+        #response.cache_dependency = ('d_about', )
         return response
 
 
 class ContactHandler(ViewHandler):
 
-    @handler_transforms(gzip_transform(compress_level=9, min_length=250))
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self):
         response = self.render_response('contact.mako')
-        response.cache_dependency = ('d_list', )
+        #response.cache_dependency = ('d_contact', )
         return response
 
 

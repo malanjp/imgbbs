@@ -20,7 +20,7 @@ ${widgets.uploadform('list', obj=upimage)}
               <img src="${path_for('img', path=i.thumb)}">
             </div>
           </a>
-          <div class='author'>${i.author or 'anonymous'}</div>
+          <div class='author'>${i.author or '名無し'}</div>
         </div>
       </li>
     </ul>

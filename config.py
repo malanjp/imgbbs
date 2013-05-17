@@ -4,6 +4,7 @@ import pymysql
 import pymysql.cursors
 from datetime import timedelta
 from hashlib import sha1
+from wheezy.http import CacheProfile
 from wheezy.html.ext.mako import widget_preprocessor
 from wheezy.html.ext.template import WhitespaceExtension
 from wheezy.html.ext.template import WidgetExtension
@@ -52,6 +53,7 @@ engine.global_vars.update({
 # Cache settings
 cache = MemoryCache()
 cached = Cached(cache, time=15 * 60)
+default_cache_profile = CacheProfile('both', duration=60)
 
 # options
 options = {

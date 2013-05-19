@@ -161,7 +161,7 @@ class DetailHandler(ViewHandler): #{{{
             cached.dependency.delete('d_detail')
             return response
 
-        replies = repo.get_reply(id)
+        replies = repo.get_replies(id)
         reply = reply or Reply()
         if not reply.parent_id:
             reply.parent_id = upimage.id
@@ -203,10 +203,10 @@ class DeleteHandler(ViewHandler): #{{{
 
             if (not self.try_update_model(upimage)
                     or not self.validate(upimage, delete_validator)):
-                return self.redirect_for('list')
+                return self.redirect_for('detail', id=upimage.id)
 
             res = self.delete(upimage)
-            if not res:
+            if res:
                 response = self.render_response('errors/delkey.mako')
                 cached.dependency.delete('d_list')
                 cached.dependency.delete('d_detail')
@@ -221,15 +221,12 @@ class DeleteHandler(ViewHandler): #{{{
         if self.route_args.route_name == 'delete_reply': #{{{
             reply = Reply()
 
-            print(self.request.form)
             if (not self.try_update_model(reply)
                     or not self.validate(reply, delete_validator)):
-                print(self.errors)
-                print('validation error')
                 return self.redirect_for('detail', id=reply.parent_id)
 
-            res = self.delete_reply(reply)
-            if not res:
+            res = self.delete(reply, mode='reply')
+            if res:
                 response = self.render_response('errors/delkey.mako')
                 cached.dependency.delete('d_list')
                 cached.dependency.delete('d_detail')
@@ -240,36 +237,42 @@ class DeleteHandler(ViewHandler): #{{{
 
     def get(self, id=None):
         if id is None:
-          return self.redirect_for('list')
+            return self.redirect_for('list')
         return self.redirect_for('detail', id=id)
 
-    def delete(self, upimage=None):
-        if not upimage:
+    def delete(self, obj=None, mode='upimage'):
+        if not obj:
             return False
 
         filename = self.route_args.get('filename')
         con = session()
         repo = Repository(con)
-        res = repo.delete_upimage(upimage)
+
+        delkey = obj.delkey
+        if mode == 'upimage':
+            obj = repo.get_upimage(id=obj.id)
+            obj.delkey = delkey
+            res = repo.delete_upimage(obj)
+        elif mode == 'reply':
+            obj = repo.get_reply(id=obj.id)
+            obj.delkey = delkey
+            res = repo.delete_reply(obj)
         con.commit()
 
-        upimage = repo.get_upimage(upimage.id)
-        if upimage:
+        if mode == 'upimage':
+            res = repo.get_upimage(obj.id)
+        elif mode == 'reply':
+            res = repo.get_reply(obj.id)
+        
+        if res:
             return False
+
+        if obj.img:
+            os.remove(os.path.join('contents/static/upload/', obj.img))
+            os.remove(os.path.join('contents/static/upload/', obj.thumb))
 
         return res
 
-    def delete_reply(self, reply=None):
-        if not reply:
-            return False
-
-        filename = self.route_args.get('filename')
-        con = session()
-        repo = Repository(con)
-        res = repo.delete_reply(reply)
-        con.commit()
-        return res
-#}}}
 
 class SoftwareHandler(ViewHandler):
 

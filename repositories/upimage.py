@@ -75,17 +75,17 @@ class Repository(object):
 
     def add_reply(self, reply):
         reply.delkey = self.generate_password(reply.delkey)
-        if upimage.deltime == '':
-            upimage.deltime = None
-        if reply.deltime:
-          reply.deltime = datetime.strptime(reply.deltime, "%Y-%m-%dT%H%M")
+        if reply.deltime == '':
+            reply.deltime = None
+        #if reply.deltime:
+        #  reply.deltime = datetime.strptime(reply.deltime, "%Y-%m-%dT%H%M")
         self.db.execute("""
                 INSERT INTO reply (created_on, parent_id, author, message, img, thumb, delkey, deltime)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (reply.created_on, reply.parent_id, reply.author, reply.message, reply.img, reply.thumb, reply.delkey, reply.deltime))
         return True
 
-    def get_reply(self, parent_id):
+    def get_replies(self, parent_id):
         self.db.execute("""
                 SELECT id, parent_id, created_on, author, message, img, thumb
                 FROM reply
@@ -100,6 +100,25 @@ class Repository(object):
                 img=row[5],
                 thumb=row[6]
               ) for row in self.db.fetchall()]
+
+    def get_reply(self, id):
+        self.db.execute("""
+                SELECT id, parent_id, created_on, author, message, img, thumb
+                FROM reply
+                WHERE id = %s
+        """, (id,))
+        row = self.db.fetchone()
+        if not row:
+            return None
+        return Reply(
+                id=row[0],
+                parent_id=[1],
+                created_on=row[2],
+                author=row[3],
+                message=row[4],
+                img=row[5],
+                thumb=row[6]
+              )
 
     def delete_reply(self, reply):
         passwd = self.generate_password(reply.delkey)

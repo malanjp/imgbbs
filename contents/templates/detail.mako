@@ -21,7 +21,7 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
           data-target="modal_${upimage.id}"
           href="#" onclick="$('#modal_${upimage.id}').modal();">削除</a>
     </div>
-    <blockquote class='message'>${upimage.message or 'コメント無し'}</blockquote>
+    <blockquote class='message'>${upimage.message or 'コメント無し'}<div class='del_schedule'>${upimage.deltime}&nbsp;ごろ削除予定</div></blockquote>
   </div>
 
   ## 削除モーダル
@@ -60,7 +60,12 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
           data-target="modal_${r.id}"
           href="#" onclick="$('#modal_${r.id}').modal();">削除</a>
       </div>
-      <blockquote class='message'>${r.message or 'コメント無し'}</blockquote>
+      <blockquote class='message'>${r.message or 'コメント無し'}
+        %if r.deltime:
+          <div class='del_schedule'>${r.deltime}&nbsp;ごろ削除予定</div>
+        %endif
+    </blockquote>
+
     </div>
     </script>
 

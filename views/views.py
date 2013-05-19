@@ -1,14 +1,16 @@
+# vim: set fdm=marker:
 import os, re, math
 from datetime import timedelta
 from PIL import Image
 from hashlib import sha1 as sha
-import datetime, time, random
+from datetime import datetime
+import time, random
 
 from wheezy.web.handlers import BaseHandler
-from config import session, cached, SELECT_LIMIT, default_cache_profile
+from config import DEBUG, session, cached, SELECT_LIMIT, default_cache_profile
 from models.upimage import UpImage, Reply
 from repositories.upimage import Repository
-from validations.upimage import upimage_validator, reply_validator
+from validations.upimage import upimage_validator, reply_validator, delete_validator
 from wheezy.caching.memory import MemoryCache
 from wheezy.http import CacheProfile
 from wheezy.http.request import HTTPRequest
@@ -18,32 +20,45 @@ from wheezy.web.transforms import handler_transforms
 from wheezy.web.handlers.file import FileHandler
 
 
-class ViewHandler(BaseHandler):
+class ViewHandler(BaseHandler): #{{{
 
-    def generate_filename(self):
-        d = datetime.datetime.today()
+    def generate_filename(self): #{{{
+        d = datetime.today()
         t = time.mktime(d.timetuple())
         r = random.random()
         return sha(r.__str__().encode('utf-8') + t.__str__().encode('utf-8')).hexdigest()
+        #}}}
 
+    def imgbbs_preprocess(self, upimage=None): #{{{
+        if self.request.files.get('img'):
+            img = self.request.files['img'][0]
 
-    def upimage_preprocess(self, upimage=None, request=None):
-        if not request.files.get('img'):
-            return False
+            if not self.validate_extension(img):
+                return self.get(upimage)
 
-        img = request.files['img'][0]
+            file = img.file
+            (filename, thumbname) = self.save_file(file)
+            upimage.img = filename
+            upimage.thumb = thumbname
 
-        if not self.validate_extension(img):
-            return self.get(upimage)
+        if self.request.form.get('deltime'):
+            upimage.deltime = self.request.form.get('deltime')[0].replace('T', ' ')
 
-        file = img.file
-        (filename, thumbname) = self.save_file(file)
-        upimage.img = filename
-        upimage.thumb = thumbname
         return upimage
+        #}}}
 
+    def add_commit_object(self, obj, mode=''): #{{{
+        con = session()
+        repo = Repository(con)
+        if mode == '':
+          res = repo.add_upimage(obj)
+        elif mode == 'reply':
+          res = repo.add_reply(obj)
+        con.commit()
+        return res
+        #}}}
 
-    def save_file(self, fieldstrage=None):
+    def save_file(self, fieldstrage=None): #{{{
         filename = self.generate_filename()
         img = self.request.files['img'][0]
         file = img.file
@@ -66,20 +81,22 @@ class ViewHandler(BaseHandler):
             img.save(thumbpath)
 
         return (filename, thumbname)
+        #}}}
 
-    def validate_extension(self, img):
+    def validate_extension(self, img): #{{{
         pattern = re.compile(r".+\.(jpg|png|gif|jpeg)$", re.IGNORECASE)
         if not pattern.match(img.filename):
             self.error('<div class="alert alert-error">jpg, png, gif いずれかの拡張子でお願いします</div>')
             return False
         return True
+        #}}}
+#}}}
 
+class ListHandler(ViewHandler): #{{{
 
-class ListHandler(ViewHandler):
-
-    @handler_cache(profile=default_cache_profile)
+    #@handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
-    def get(self, upimage=None):
+    def get(self, upimage=None): #{{{
         page = self.route_args.get('page', 1)
 
         con = session()
@@ -93,40 +110,44 @@ class ListHandler(ViewHandler):
 
         response = self.render_response('list.mako',
                 upimages=upimages, upimage=upimage, count=count, page=page, pages=pages)
-        #response.cache_dependency = ('d_list', )
+        response.cache_dependency = ('d_detail', )
         return response
+        #}}}
 
-    def pagecount(self, count, page):
+    def pagecount(self, count, page): #{{{
         pages = math.ceil(count / SELECT_LIMIT)
         return pages
+        #}}}
 
-    def post(self):
+    def post(self): #{{{
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)
 
         upimage = UpImage()
-
-        if 'img' in self.request.files:
-            upimage = self.upimage_preprocess(upimage, self.request)
-
+        upimage = self.imgbbs_preprocess(upimage)
         if (not self.try_update_model(upimage)
                 or not self.validate(upimage, upimage_validator)):
+            print(self.errors)
             return self.get(upimage)
+
+        #if DEBUG:
+        #  for key, i in self.request.form.items():
+        #    print(key, i)
 
         con = session()
         repo = Repository(con)
-        if not repo.add_upimage(upimage):
+        if not self.add_commit_object(upimage):
             self.error('Sorry, can not add your image.')
             return self.get(upimage)
-        con.commit()
 
         cached.dependency.delete('d_list')
         return self.see_other_for('list')
+        #}}}
+#}}}
 
+class DetailHandler(ViewHandler): #{{{
 
-class DetailHandler(ViewHandler):
-
-    @handler_cache(profile=default_cache_profile)
+    #@handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, reply=None):
         id = self.route_args.get('id')
@@ -134,13 +155,19 @@ class DetailHandler(ViewHandler):
         repo = Repository(con)
 
         upimage = repo.get_upimage(id)
-        replies = repo.get_reply(id)
+        if not upimage:
+            response = self.render_response('errors/http404.mako')
+            cached.dependency.delete('d_list')
+            cached.dependency.delete('d_detail')
+            return response
+
+        replies = repo.get_replies(id)
         reply = reply or Reply()
         if not reply.parent_id:
             reply.parent_id = upimage.id
 
         response = self.render_response('detail.mako', upimage=upimage, reply=reply, replies=replies)
-        #response.cache_dependency = ('d_detail', )
+        response.cache_dependency = ('d_detail', )
         return response
 
     def post(self):
@@ -148,91 +175,102 @@ class DetailHandler(ViewHandler):
             return self.redirect_for(self.route_args.route_name)
 
         reply = Reply()
-
-        if (not self.try_update_model(reply)):
-            return self.redirect_for(self.route_args.route_name)
-
-        reply = self.reply(reply, self.request)
-        if reply:
-            self.commit_reply(reply)
-            return self.redirect_for('detail', id=reply.parent_id)
-        else:
-            #self.error('<div class="alert alert-error">jpg, png, gif いずれかの拡張子でお願いします</div>')
-            return self.get(reply)
-
-
-    def reply(self, reply=None, request=None):
-        if not reply:
-            return False
-
-        res = self.upimage_preprocess(reply, self.request)
-        if res:
-            reply = res
-
         if (not self.try_update_model(reply)
                 or not self.validate(reply, reply_validator)):
-            return False
+            print(self.errors)
+            return self.get(reply)
 
-        return reply
+        reply = self.imgbbs_preprocess(reply)
 
+        if not reply:
+          return self.get(reply)
 
-    def commit_reply(self, reply):
-        con = session()
-        repo = Repository(con)
-        res = repo.add_reply(reply)
-        con.commit()
-        return res
+        if not self.add_commit_object(reply, mode='reply'):
+          self.error('Sorry, can not add your image.')
+          return self.get(reply)
 
+        cached.dependency.delete('d_detail')
+        return self.redirect_for('detail', id=reply.parent_id)
+#}}}
 
-class DeleteHandler(ViewHandler):
+class DeleteHandler(ViewHandler): #{{{
     def post(self):
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)
 
-        if self.route_args.route_name == 'delete':
+        if self.route_args.route_name == 'delete': #{{{
             upimage = UpImage()
-            if (not self.try_update_model(upimage)):
-                return self.redirect_for(self.route_args.route_name)
+
+            if (not self.try_update_model(upimage)
+                    or not self.validate(upimage, delete_validator)):
+                return self.redirect_for('detail', id=upimage.id)
+
             res = self.delete(upimage)
-            return self.redirect_for('list')
+            if res:
+                response = self.render_response('errors/delkey.mako')
+                cached.dependency.delete('d_list')
+                cached.dependency.delete('d_detail')
+                return response
 
-        if self.route_args.route_name == 'delete_reply':
+            cached.dependency.delete('d_detail')
+            cached.dependency.delete('d_list')
+            response = self.render_response('deleted.mako')
+            return response
+            #}}}
+
+        if self.route_args.route_name == 'delete_reply': #{{{
             reply = Reply()
-            if (not self.try_update_model(reply)):
-                return self.redirect_for(self.route_args.route_name)
-            res = self.delete_reply(reply)
+
+            if (not self.try_update_model(reply)
+                    or not self.validate(reply, delete_validator)):
+                return self.redirect_for('detail', id=reply.parent_id)
+
+            res = self.delete(reply, mode='reply')
+            if res:
+                response = self.render_response('errors/delkey.mako')
+                cached.dependency.delete('d_list')
+                cached.dependency.delete('d_detail')
+                return response
+            cached.dependency.delete('d_detail')
             return self.redirect_for('detail', id=reply.parent_id)
+            #}}}
 
+    def get(self, id=None):
+        if id is None:
+            return self.redirect_for('list')
+        return self.redirect_for('detail', id=id)
 
-    def get(self):
-        return self.redirect_for('list')
-
-    def delete(self, upimage=None):
-        if not upimage:
+    def delete(self, obj=None, mode='upimage'):
+        if not obj:
             return False
-
-        if upimage.delkey is '':
-            return self.redirect_for(self.route_args.route_name)
 
         filename = self.route_args.get('filename')
         con = session()
         repo = Repository(con)
-        res = repo.delete_upimage(upimage)
-        con.commit()
-        return res
 
-    def delete_reply(self, reply=None):
-        if not reply:
+        delkey = obj.delkey
+        if mode == 'upimage':
+            obj = repo.get_upimage(id=obj.id)
+            obj.delkey = delkey
+            res = repo.delete_upimage(obj)
+        elif mode == 'reply':
+            obj = repo.get_reply(id=obj.id)
+            obj.delkey = delkey
+            res = repo.delete_reply(obj)
+        con.commit()
+
+        if mode == 'upimage':
+            res = repo.get_upimage(obj.id)
+        elif mode == 'reply':
+            res = repo.get_reply(obj.id)
+        
+        if res:
             return False
 
-        if reply.delkey is '':
-            return self.redirect_for(self.route_args.route_name)
+        if obj.img:
+            os.remove(os.path.join('contents/static/upload/', obj.img))
+            os.remove(os.path.join('contents/static/upload/', obj.thumb))
 
-        filename = self.route_args.get('filename')
-        con = session()
-        repo = Repository(con)
-        res = repo.delete_reply(reply)
-        con.commit()
         return res
 
 
@@ -242,7 +280,7 @@ class SoftwareHandler(ViewHandler):
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self):
         response = self.render_response('software.mako')
-        #response.cache_dependency = ('d_software', )
+        response.cache_dependency = ('d_software', )
         return response
 
 
@@ -252,7 +290,7 @@ class AboutHandler(ViewHandler):
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self):
         response = self.render_response('about.mako')
-        #response.cache_dependency = ('d_about', )
+        response.cache_dependency = ('d_about', )
         return response
 
 
@@ -262,8 +300,24 @@ class ContactHandler(ViewHandler):
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self):
         response = self.render_response('contact.mako')
-        #response.cache_dependency = ('d_contact', )
+        response.cache_dependency = ('d_contact', )
         return response
+
+
+class HttpErrorHandler(ViewHandler):
+
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
+    def get(self):
+        if self.route_args.route_name == 'http500': #{{{
+            response = self.render_response('errors/http500.mako')
+            response.cache_dependency = ('d_errors', )
+            return response
+
+        if self.route_args.route_name == 'http404': #{{{
+            response = self.render_response('errors/http404.mako')
+            response.cache_dependency = ('d_errors', )
+            return response
 
 
 

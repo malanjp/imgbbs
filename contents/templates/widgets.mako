@@ -58,6 +58,15 @@
             </td>
           </tr>
           <tr>
+            <td>
+              ${obj.deltime.label('自動削除')}
+            </td>
+            <td>
+              <input type='datetime-local' id='deltime' name='deltime' placeholder='ex. 2013/05/01 12:30'>
+              ${obj.deltime.error()}
+            </td>
+          </tr>
+          <tr>
             <td></td>
             <td>
               <input type='submit' value='送信' class="btn btn-block btn-primary">

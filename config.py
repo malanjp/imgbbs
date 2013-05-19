@@ -19,6 +19,11 @@ from wheezy.caching.memory import MemoryCache
 from wheezy.caching.patterns import Cached
 from wheezy.security.crypto import Ticket
 from wheezy.security.crypto.comp import aes128
+from wheezy.core.collections import defaultdict
+
+
+# debug flag
+DEBUG = True
 
 
 def session():
@@ -85,6 +90,18 @@ options.update({
         'AUTH_COOKIE_PATH': '',
         'AUTH_COOKIE_SECURE': False,
 })
+
+options['http_errors'] = defaultdict(lambda: 'http500', {
+        # HTTP status code: route name
+        400: 'http400',
+        401: 'signin',
+        403: 'http403',
+        404: 'http404',
+        500: 'http500',
+    })
+
+
+
 
 
 

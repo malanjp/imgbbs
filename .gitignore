@@ -37,3 +37,4 @@ nosetests.xml
 contents/static/upload/*
 .python-version
 imgbbs.db
+wheezy

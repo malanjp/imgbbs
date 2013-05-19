@@ -56,7 +56,7 @@ class Repository(object):
 
     def get_upimage(self, id):
         self.db.execute("""
-                SELECT id, created_on, author, title, message, img, thumb
+                SELECT id, created_on, author, title, message, img, thumb, deltime
                 FROM upimage
                 WHERE id = %s
         """, (id,))
@@ -70,7 +70,8 @@ class Repository(object):
                 title=row[3],
                 message=row[4],
                 img=row[5],
-                thumb=row[6]
+                thumb=row[6],
+                deltime=row[7]
               )
 
     def add_reply(self, reply):
@@ -87,7 +88,7 @@ class Repository(object):
 
     def get_replies(self, parent_id):
         self.db.execute("""
-                SELECT id, parent_id, created_on, author, message, img, thumb
+                SELECT id, parent_id, created_on, author, message, img, thumb, deltime
                 FROM reply
                 WHERE parent_id = %s
         """, (parent_id,))
@@ -98,12 +99,13 @@ class Repository(object):
                 author=row[3],
                 message=row[4],
                 img=row[5],
-                thumb=row[6]
+                thumb=row[6],
+                deltime=row[7]
               ) for row in self.db.fetchall()]
 
     def get_reply(self, id):
         self.db.execute("""
-                SELECT id, parent_id, created_on, author, message, img, thumb
+                SELECT id, parent_id, created_on, author, message, img, thumb, deltime
                 FROM reply
                 WHERE id = %s
         """, (id,))
@@ -117,7 +119,8 @@ class Repository(object):
                 author=row[3],
                 message=row[4],
                 img=row[5],
-                thumb=row[6]
+                thumb=row[6],
+                deltime=row[7] 
               )
 
     def delete_reply(self, reply):

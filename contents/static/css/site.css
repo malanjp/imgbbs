@@ -98,3 +98,7 @@ input[type=file] {
 .pagination {
     text-align:center;
 }
+.del_schedule {
+    text-align:right;
+    margin-top:10px;
+}

@@ -21,6 +21,10 @@ from wheezy.security.crypto import Ticket
 from wheezy.security.crypto.comp import aes128
 
 
+# debug flag
+DEBUG = True
+
+
 def session():
 #    return sqlite3.connect('imgbbs.db',
 #                           detect_types=sqlite3.PARSE_DECLTYPES)

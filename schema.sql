@@ -9,7 +9,8 @@ CREATE TABLE upimage (
     message TEXT,
     img TEXT NOT NULL,
     thumb TEXT NOT NULL,
-    delkey TEXT
+    delkey TEXT,
+    deltime DATETIME
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE reply (
@@ -22,6 +23,7 @@ CREATE TABLE reply (
     img TEXT,
     thumb TEXT,
     delkey TEXT,
+    deltime DATETIME,
     foreign key (`parent_id`)
         references `upimage` (`id`)
         on delete cascade

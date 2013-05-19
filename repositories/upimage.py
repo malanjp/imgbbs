@@ -1,4 +1,5 @@
 from hashlib import sha1 as sha
+from datetime import datetime
 from models.upimage import UpImage, Reply
 from config import secretkey
 from config import SELECT_LIMIT
@@ -33,10 +34,13 @@ class Repository(object):
 
     def add_upimage(self, upimage):
         upimage.delkey = self.generate_password(upimage.delkey)
+        #if upimage.deltime:
+        #  upimage.deltime = datetime.strptime(upimage.deltime, "%Y-%m-%dT%H%M")
+        print('repo deltime=', upimage.deltime)
         self.db.execute("""
-                INSERT INTO upimage (created_on, author, title, message, img, thumb, delkey)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (upimage.created_on, upimage.author, upimage.title, upimage.message, upimage.img, upimage.thumb, upimage.delkey))
+                INSERT INTO upimage (created_on, author, title, message, img, thumb, delkey, deltime)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (upimage.created_on, upimage.author, upimage.title, upimage.message, upimage.img, upimage.thumb, upimage.delkey, upimage.deltime))
         return True
 
     def get_count(self):
@@ -67,10 +71,12 @@ class Repository(object):
 
     def add_reply(self, reply):
         reply.delkey = self.generate_password(reply.delkey)
+        #if reply.deltime:
+        #  reply.deltime = datetime.strptime(reply.deltime, "%Y-%m-%dT%H%M")
         self.db.execute("""
-                INSERT INTO reply (created_on, parent_id, author, message, img, thumb, delkey)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (reply.created_on, reply.parent_id, reply.author, reply.message, reply.img, reply.thumb, reply.delkey))
+                INSERT INTO reply (created_on, parent_id, author, message, img, thumb, delkey, deltime)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (reply.created_on, reply.parent_id, reply.author, reply.message, reply.img, reply.thumb, reply.delkey, reply.deltime))
         return True
 
     def get_reply(self, parent_id):
@@ -128,6 +134,8 @@ class Repository(object):
         return res
 
     def generate_password(self, key):
+        if not key:
+          key = ''
         return sha(key.encode('utf-8') + secretkey.encode('utf-8')).hexdigest()
 
 

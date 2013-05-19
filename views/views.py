@@ -156,7 +156,10 @@ class DetailHandler(ViewHandler): #{{{
 
         upimage = repo.get_upimage(id)
         if not upimage:
-            return self.redirect_for('http404')
+            response = self.render_response('errors/http404.mako')
+            cached.dependency.delete('d_list')
+            cached.dependency.delete('d_detail')
+            return response
 
         replies = repo.get_reply(id)
         reply = reply or Reply()
@@ -203,9 +206,16 @@ class DeleteHandler(ViewHandler): #{{{
                 return self.redirect_for('list')
 
             res = self.delete(upimage)
+            if not res:
+                response = self.render_response('errors/delkey.mako')
+                cached.dependency.delete('d_list')
+                cached.dependency.delete('d_detail')
+                return response
+
             cached.dependency.delete('d_detail')
             cached.dependency.delete('d_list')
-            return self.redirect_for('detail', id=upimage.id)
+            response = self.render_response('deleted.mako')
+            return response
             #}}}
 
         if self.route_args.route_name == 'delete_reply': #{{{
@@ -219,6 +229,11 @@ class DeleteHandler(ViewHandler): #{{{
                 return self.redirect_for('detail', id=reply.parent_id)
 
             res = self.delete_reply(reply)
+            if not res:
+                response = self.render_response('errors/delkey.mako')
+                cached.dependency.delete('d_list')
+                cached.dependency.delete('d_detail')
+                return response
             cached.dependency.delete('d_detail')
             return self.redirect_for('detail', id=reply.parent_id)
             #}}}
@@ -237,6 +252,11 @@ class DeleteHandler(ViewHandler): #{{{
         repo = Repository(con)
         res = repo.delete_upimage(upimage)
         con.commit()
+
+        upimage = repo.get_upimage(upimage.id)
+        if upimage:
+            return False
+
         return res
 
     def delete_reply(self, reply=None):

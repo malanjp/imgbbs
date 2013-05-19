@@ -34,6 +34,8 @@ class Repository(object):
 
     def add_upimage(self, upimage):
         upimage.delkey = self.generate_password(upimage.delkey)
+        if upimage.deltime == '':
+            upimage.deltime = None
         #if upimage.deltime:
         #  upimage.deltime = datetime.strptime(upimage.deltime, "%Y-%m-%dT%H%M")
         print('repo deltime=', upimage.deltime)
@@ -73,8 +75,10 @@ class Repository(object):
 
     def add_reply(self, reply):
         reply.delkey = self.generate_password(reply.delkey)
-        #if reply.deltime:
-        #  reply.deltime = datetime.strptime(reply.deltime, "%Y-%m-%dT%H%M")
+        if upimage.deltime == '':
+            upimage.deltime = None
+        if reply.deltime:
+          reply.deltime = datetime.strptime(reply.deltime, "%Y-%m-%dT%H%M")
         self.db.execute("""
                 INSERT INTO reply (created_on, parent_id, author, message, img, thumb, delkey, deltime)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)

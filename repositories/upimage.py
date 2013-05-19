@@ -59,6 +59,8 @@ class Repository(object):
                 WHERE id = %s
         """, (id,))
         row = self.db.fetchone()
+        if not row:
+            return None
         return UpImage(
                 id=row[0],
                 created_on=row[1],

@@ -155,6 +155,9 @@ class DetailHandler(ViewHandler): #{{{
         repo = Repository(con)
 
         upimage = repo.get_upimage(id)
+        if not upimage:
+            return self.redirect_for('http404')
+
         replies = repo.get_reply(id)
         reply = reply or Reply()
         if not reply.parent_id:
@@ -276,6 +279,22 @@ class ContactHandler(ViewHandler):
         response = self.render_response('contact.mako')
         response.cache_dependency = ('d_contact', )
         return response
+
+
+class HttpErrorHandler(ViewHandler):
+
+    @handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
+    def get(self):
+        if self.route_args.route_name == 'http500': #{{{
+            response = self.render_response('errors/http500.mako')
+            response.cache_dependency = ('d_errors', )
+            return response
+
+        if self.route_args.route_name == 'http404': #{{{
+            response = self.render_response('errors/http404.mako')
+            response.cache_dependency = ('d_errors', )
+            return response
 
 
 

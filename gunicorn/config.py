@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+import socket
 ## Server Socket
 # bind = '127.0.0.1:xxxxx'
 # bind = 'xx.xx.xx.xx:xxxxx'
@@ -20,8 +22,12 @@ spew  = False
 preload_app = True
 daemon = True
 pidfile = '/var/run/gunicorn/imgbbs.pid' # 起動前に/var/run/gunicornを作成する
-user  = 'ubuntu'
-group = 'ubuntu'
+if socket.gethostname() == 'ip-172-31-28-89':
+    user  = 'ubuntu'
+    group = 'ubuntu'
+else:
+    user  = 'mshibata'
+    group = 'mshibata'
 #umask = 0002
 
 ## Logging

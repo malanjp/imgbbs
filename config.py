@@ -1,5 +1,6 @@
 #import sqlite3
 #import mysql.connector
+import socket
 import pymysql
 import pymysql.cursors
 from datetime import timedelta
@@ -32,7 +33,10 @@ def session():
 #    connect = mysql.connector.connect(db="imgbbs",
 #                                   host="localhost", port=3306, user="imgbbs", passwd="_WioT.A")
 #    return connect.cursor()
-    return pymysql.connect(db='imgbbs', user='imgbbs', passwd='_WioT.A', charset='utf8')
+    if socket.gethostname() == 'mshibata-vm-ubuntu':
+        return pymysql.connect(db='imgbbs', host='192.168.72.100', user='imgbbs', passwd='_WioT.A', charset='utf8')
+    else:
+        return pymysql.connect(db='imgbbs', host='localhost', user='imgbbs', passwd='_WioT.A', charset='utf8')
 
 
 # secret key

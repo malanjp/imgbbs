@@ -37,6 +37,6 @@ nosetests.xml
 contents/static/upload/*
 .python-version
 imgbbs.db
-wheezy
 gitrepos
 celerybeat-schedule.*
+celerybeat.pid

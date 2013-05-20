@@ -3,13 +3,10 @@ Mako==0.8.0
 MarkupSafe==0.15
 Pillow==2.0.0
 PyMySQL3==0.5
-<<<<<<< HEAD
-=======
 anyjson==0.3.3
 billiard==2.7.3.28
 celery==3.0.19
 distribute==0.6.34
->>>>>>> 69a080aa6d4fcca1ce465bee3787ad33090924fc
 gunicorn==0.17.4
 kombu==2.5.10
 python-dateutil==2.1

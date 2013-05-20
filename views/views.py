@@ -199,14 +199,15 @@ class DeleteHandler(ViewHandler): #{{{
             return self.redirect_for(self.route_args.route_name)
 
         if self.route_args.route_name == 'delete': #{{{
+            print('delete')
             upimage = UpImage()
 
             if (not self.try_update_model(upimage)
                     or not self.validate(upimage, delete_validator)):
                 return self.redirect_for('detail', id=upimage.id)
 
-            res = self.delete(upimage)
-            if res:
+            res = self.delete(upimage, mode='upimage')
+            if not res:
                 response = self.render_response('errors/delkey.mako')
                 cached.dependency.delete('d_list')
                 cached.dependency.delete('d_detail')
@@ -226,7 +227,7 @@ class DeleteHandler(ViewHandler): #{{{
                 return self.redirect_for('detail', id=reply.parent_id)
 
             res = self.delete(reply, mode='reply')
-            if res:
+            if not res:
                 response = self.render_response('errors/delkey.mako')
                 cached.dependency.delete('d_list')
                 cached.dependency.delete('d_detail')
@@ -271,7 +272,7 @@ class DeleteHandler(ViewHandler): #{{{
             os.remove(os.path.join('contents/static/upload/', obj.img))
             os.remove(os.path.join('contents/static/upload/', obj.thumb))
 
-        return res
+        return True
 
 
 class SoftwareHandler(ViewHandler):

@@ -1,0 +1,1 @@
+celerybeat -A script.delete

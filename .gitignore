@@ -38,6 +38,5 @@ contents/static/upload/*
 .python-version
 imgbbs.db
 gitrepos
-
 celerybeat-schedule.*
 celerybeat.pid

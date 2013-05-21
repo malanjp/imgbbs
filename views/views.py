@@ -94,7 +94,7 @@ class ViewHandler(BaseHandler): #{{{
 
 class ListHandler(ViewHandler): #{{{
 
-    #@handler_cache(profile=default_cache_profile)
+    @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, upimage=None): #{{{
         page = self.route_args.get('page', 1)
@@ -110,7 +110,7 @@ class ListHandler(ViewHandler): #{{{
 
         response = self.render_response('list.mako',
                 upimages=upimages, upimage=upimage, count=count, page=page, pages=pages)
-        response.cache_dependency = ('d_detail', )
+        response.cache_dependency = ('d_list', )
         return response
         #}}}
 
@@ -147,7 +147,7 @@ class ListHandler(ViewHandler): #{{{
 
 class DetailHandler(ViewHandler): #{{{
 
-    #@handler_cache(profile=default_cache_profile)
+    @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, reply=None):
         id = self.route_args.get('id')
@@ -194,6 +194,7 @@ class DetailHandler(ViewHandler): #{{{
 #}}}
 
 class DeleteHandler(ViewHandler): #{{{
+
     def post(self):
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)

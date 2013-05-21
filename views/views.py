@@ -147,7 +147,7 @@ class ListHandler(ViewHandler): #{{{
 
 class DetailHandler(ViewHandler): #{{{
 
-    @handler_cache(profile=default_cache_profile)
+    #@handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, reply=None):
         id = self.route_args.get('id')
@@ -174,20 +174,24 @@ class DetailHandler(ViewHandler): #{{{
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)
 
+        print(self.request.form)
         reply = Reply()
         if (not self.try_update_model(reply)
                 or not self.validate(reply, reply_validator)):
             print(self.errors)
+            cached.dependency.delete('d_detail')
             return self.get(reply)
 
         reply = self.imgbbs_preprocess(reply)
 
         if not reply:
-          return self.get(reply)
+            cached.dependency.delete('d_detail')
+            return self.get(reply)
 
         if not self.add_commit_object(reply, mode='reply'):
-          self.error('Sorry, can not add your image.')
-          return self.get(reply)
+            self.error('Sorry, can not add your image.')
+            cached.dependency.delete('d_detail')
+            return self.get(reply)
 
         cached.dependency.delete('d_detail')
         return self.redirect_for('detail', id=reply.parent_id)

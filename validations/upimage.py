@@ -12,7 +12,7 @@ upimage_validator = Validator({
 reply_validator = Validator({
     'parent_id': [required(message_template='<span class="red">返信先IDがありません</span>')],
     'author': [length(max=10)],
-    'message': [required(message_template='<span class="red">メッセージ内容を3文字以上入れてください</span>')],
+    'message': [length(min=3, max=512), required(message_template='<span class="red">メッセージ内容を3文字以上入れてください</span>')],
 #    'img': [required(message_template='<span class="red">画像が未選択です</span>')],
     'delkey': [length(max=20)],
 })

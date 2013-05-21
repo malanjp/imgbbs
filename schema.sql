@@ -10,7 +10,8 @@ CREATE TABLE upimage (
     img TEXT NOT NULL,
     thumb TEXT NOT NULL,
     delkey TEXT,
-    deltime DATETIME
+    deltime DATETIME,
+    reply_count INTEGER
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE reply (

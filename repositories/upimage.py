@@ -140,6 +140,9 @@ class Repository(object):
                     FROM reply
                     WHERE id = %s
             """, (reply.id,))
+        self.db.execute("""
+                update upimage, reply set upimage.reply_count = (select count(*) from reply where upimage.id = reply.parent_id)
+        """)
         self.con.commit()
         return res
 

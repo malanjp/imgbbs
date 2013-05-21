@@ -16,7 +16,7 @@ class Repository(object):
             offset = (int(page) - 1) * SELECT_LIMIT
 
         self.db.execute("""
-                SELECT id, created_on, author, title, message, img, thumb
+                SELECT id, created_on, author, title, message, img, thumb, reply_count
                 FROM upimage
                 ORDER BY id DESC
                 LIMIT %s
@@ -29,16 +29,14 @@ class Repository(object):
                 title=row[3],
                 message=row[4],
                 img=row[5],
-                thumb=row[6]
+                thumb=row[6],
+                reply_count=row[7]
                ) for row in self.db.fetchall()]
 
     def add_upimage(self, upimage):
         upimage.delkey = self.generate_password(upimage.delkey)
         if upimage.deltime == '':
             upimage.deltime = None
-        #if upimage.deltime:
-        #  upimage.deltime = datetime.strptime(upimage.deltime, "%Y-%m-%dT%H%M")
-        print('repo deltime=', upimage.deltime)
         self.db.execute("""
                 INSERT INTO upimage (created_on, author, title, message, img, thumb, delkey, deltime)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -84,6 +82,9 @@ class Repository(object):
                 INSERT INTO reply (created_on, parent_id, author, message, img, thumb, delkey, deltime)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (reply.created_on, reply.parent_id, reply.author, reply.message, reply.img, reply.thumb, reply.delkey, reply.deltime))
+        self.db.execute("""
+                update upimage, reply set upimage.reply_count = (select count(*) from reply where upimage.id = reply.parent_id)
+        """)
         return True
 
     def get_replies(self, parent_id):

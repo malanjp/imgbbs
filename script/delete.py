@@ -50,13 +50,14 @@ def delete():
             # 子エントリ削除
             query = "delete from reply where id = %s " % child_row.get('id')
             db.execute(query)
-    
+            db.execute("update upimage, reply set upimage.reply_count = (select count(*) from reply where upimage.id = reply.parent_id)")
+            con.commit()
+
         # 親エントリ削除
         query = "delete from upimage where id = %s " % row.get('id')
         db.execute(query)
-    
         con.commit()
-    
+   
     
         # 子画像削除
         query = "select * from reply where parent_id = %s" % row.get('id')
@@ -72,11 +73,12 @@ def delete():
             # 子エントリ削除
             query = "delete from reply where id = %s " % child_row.get('id')
             db.execute(query)
+            db.execute("update upimage, reply set upimage.reply_count = (select count(*) from reply where upimage.id = reply.parent_id)")
+            con.commit()
 
         # 親エントリ削除
         query = "delete from upimage where id = %s " % row.get('id')
         db.execute(query)
-
         con.commit()
 
 
@@ -93,8 +95,11 @@ def delete():
         # エントリ削除
         query = "delete from reply where id = %s " % row.get('id')
         db.execute(query)
+        db.execute("update upimage, reply set upimage.reply_count = (select count(*) from reply where upimage.id = reply.parent_id)")
         con.commit()
 
+    db.close()
+    con.close()
 
 
 

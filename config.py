@@ -28,11 +28,6 @@ DEBUG = True
 
 
 def session():
-#    return sqlite3.connect('imgbbs.db',
-#                           detect_types=sqlite3.PARSE_DECLTYPES)
-#    connect = mysql.connector.connect(db="imgbbs",
-#                                   host="localhost", port=3306, user="imgbbs", passwd="_WioT.A")
-#    return connect.cursor()
     if socket.gethostname() == 'mshibata-vm-ubuntu':
         return pymysql.connect(db='imgbbs', host='192.168.72.100', user='imgbbs', passwd='_WioT.A', charset='utf8')
     else:
@@ -41,23 +36,9 @@ def session():
 
 # secret key
 secretkey = 'faw_iodjnf+ozx90i2j+lkfals1'
-
-# Engine settings
 static_file = file_handler(root='contents/static/', age=timedelta(hours=1))
-searchpath = ['contents/templates']
-engine = Engine(
-        loader=FileLoader(searchpath),
-        extensions=[
-            CoreExtension(),
-            WhitespaceExtension(),
-            WidgetExtension(),
-])
+template_path = ['contents/templates']
 SELECT_LIMIT = 20
-
-engine.global_vars.update({
-    'format_value': format_value,
-    'h': html_escape,
-})
 
 # Cache settings
 cache = MemoryCache()
@@ -68,7 +49,7 @@ default_cache_profile = CacheProfile('both', duration=60)
 options = {
     'render_template': MakoTemplate(
         input_encoding="utf-8",
-        directories=searchpath,
+        directories=template_path,
         filesystem_checks=False,
         preprocessor=[widget_preprocessor]
     ),

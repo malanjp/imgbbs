@@ -12,7 +12,7 @@
     <meta name="google-site-verification" content="wx8SPjHiF7C07gVHbeAfeisfRMK9rzhyoLHGiORtxeI" />
     <link rel="home" href="http://shoboi.net/" title="しょぼいろだ。">
     <link rel="index" href="http://shoboi.net/" title="しょぼいろだ。">
-    <link rel="shortcut icon" href="/static/img/favicon.ico">
+    <link rel="shortcut icon" href="/static/favicon.ico">
 
     <!-- Loading Bootstrap -->
     <link href="${path_for('static', path='uiset/css/bootstrap.min.css')}" rel="stylesheet">
@@ -34,7 +34,7 @@
       <div class="navbar navbar-inverse">
         <div class="navbar-inner">
           <div class="container">
-            <a class="brand" href="${path_for('list')}">しょぼいろだ。</a>
+            <a class="brand" href="${path_for('list')}">しょぼいろだ。<span style="font-size:small">エロも笑いも虹も惨事もしょぼいろだで共有してね</span></a>
             <ul class="nav nav-pills pull-right">
               <li><a href="${path_for('software')}">Software</a></li>
               <li><a href="${path_for('about')}">About</a></li>

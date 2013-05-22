@@ -12,7 +12,7 @@
     <meta name="google-site-verification" content="wx8SPjHiF7C07gVHbeAfeisfRMK9rzhyoLHGiORtxeI" />
     <link rel="home" href="http://shoboi.net/" title="しょぼいろだ。">
     <link rel="index" href="http://shoboi.net/" title="しょぼいろだ。">
-    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
 
     <!-- Loading Bootstrap -->
     <link href="${path_for('static', path='uiset/css/bootstrap.min.css')}" rel="stylesheet">

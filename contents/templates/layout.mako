@@ -49,6 +49,8 @@
         </div>
       </div>
       <div class="row-fluid">
+        ## <SCRIPT TYPE="text/javascript" SRC="http://rranking13.ziyu.net/js/shoboi.js" charset=utf-8></SCRIPT>
+        ## <SCRIPT TYPE="text/javascript" SRC="http://rranking13.ziyu.net/rank.php?shoboi"></SCRIPT><A href="http://www.ziyu.net/" target=_blank><IMG SRC="http://rranking13.ziyu.net/rranking.gif" alt="アクセスランキング" border=0 width=35 height=11></A><NOSCRIPT><A href="http://www.ziyu.net/" target=_blank>アクセスランキング</A></NOSCRIPT>
         <footer>
         ## TODO: footer
         </footer>

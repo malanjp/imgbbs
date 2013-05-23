@@ -24,7 +24,9 @@ from wheezy.core.collections import defaultdict
 
 
 # debug flag
-DEBUG = True
+DEBUG = False
+if socket.gethostname() == 'mshibata-vm-ubuntu':
+    DEBUG = True
 
 
 def session():

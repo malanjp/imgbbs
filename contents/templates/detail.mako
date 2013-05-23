@@ -9,23 +9,27 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
 
 <div class='span4'></div>
 <div class='span4'>
-   <div class='detail'>
+  <div class='detail'>
+    ## 名前とかタイトルとか
+    <div class='author'>
+      <div class='title'>タイトル：${upimage.title or '無題'}</div>
+      <span class='author_id'>No. ${upimage.id} </span>
+      名前：<span class='name'>${upimage.author or '名無し'}</span>
+      ${upimage.created_on}&nbsp;&nbsp;<a id="pop_modal_${upimage.id}"
+        data-toggle="modal"
+        data-target="modal_${upimage.id}"
+        href="#" onclick="$('#modal_${upimage.id}').modal();">削除</a>
+    </div>
+    ## 画像
     <a href="${path_for('img', path=upimage.img)}">
       <img src="${path_for('img', path=upimage.img)}">
     </a>
-    <div class='author'>
-        <span class='title'>${upimage.title or '無題'}</span>
-        名前：<span class='name'>${upimage.author or '名無し'}</span>
-        ${upimage.created_on}&nbsp;&nbsp;<a id="pop_modal_${upimage.id}"
-          data-toggle="modal"
-          data-target="modal_${upimage.id}"
-          href="#" onclick="$('#modal_${upimage.id}').modal();">削除</a>
-    </div>
+    ## コメント
     <blockquote class='message'>${upimage.message or 'コメント無し'}
       %if upimage.deltime:
         <div class='del_schedule'>${upimage.deltime}&nbsp;ごろ削除予定</div>
       %endif
-      </blockquote>
+    </blockquote>
   </div>
 
   ## 削除モーダル
@@ -52,26 +56,27 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
 
   %for r in replies:
     <div class='detail'>
-      %if r.img:
-      <a href="${path_for('img', path=r.img)}">
-        <img src="${path_for('img', path=r.img)}">
-      </a>
-      %endif
+      ## 名前とかタイトルとか
       <div class='author'>
-        名前：<span class='name'>${r.author or '名無し'}</span>
+        <span class='author_id'>Res. ${r.id} </span>名前：<span class='name'>${r.author or '名無し'}</span>
         ${r.created_on}&nbsp;&nbsp;<a id="pop_modal_${r.id}"
           data-toggle="modal"
           data-target="modal_${r.id}"
           href="#" onclick="$('#modal_${r.id}').modal();">削除</a>
       </div>
+      ## 画像
+      %if r.img:
+      <a href="${path_for('img', path=r.img)}">
+        <img src="${path_for('img', path=r.img)}">
+      </a>
+      %endif
+      ## コメント
       <blockquote class='message'>${r.message or 'コメント無し'}
         %if r.deltime:
           <div class='del_schedule'>${r.deltime}&nbsp;ごろ削除予定</div>
         %endif
-    </blockquote>
-
+      </blockquote>
     </div>
-    </script>
 
     ## 削除モーダル
     <div id="modal_${r.id}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="投稿を削除" aria-hidden="true">

@@ -18,7 +18,7 @@ class Repository(object):
         self.db.execute("""
                 SELECT id, created_on, author, title, message, img, thumb, reply_count
                 FROM upimage
-                ORDER BY id DESC
+                ORDER BY last_modified DESC
                 LIMIT %s
                 OFFSET %s
         """, (SELECT_LIMIT, offset))
@@ -38,9 +38,9 @@ class Repository(object):
         if upimage.deltime == '':
             upimage.deltime = None
         self.db.execute("""
-                INSERT INTO upimage (created_on, author, title, message, img, thumb, delkey, deltime)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """, (upimage.created_on, upimage.author, upimage.title, upimage.message, upimage.img, upimage.thumb, upimage.delkey, upimage.deltime))
+                INSERT INTO upimage (created_on, author, title, message, img, thumb, delkey, deltime, last_modified)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (upimage.created_on, upimage.author, upimage.title, upimage.message, upimage.img, upimage.thumb, upimage.delkey, upimage.deltime, upimage.last_modified))
         return True
 
     def get_count(self):
@@ -85,6 +85,10 @@ class Repository(object):
         self.db.execute("""
                 update upimage, reply set upimage.reply_count = (select count(*) from reply where upimage.id = reply.parent_id)
         """)
+        # スレの最終更新日をUpdate
+        self.db.execute("""
+                update upimage set upimage.last_modified = now() where id = %s
+        """, (reply.parent_id))
         return True
 
     def get_replies(self, parent_id):

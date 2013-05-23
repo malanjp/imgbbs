@@ -4,7 +4,7 @@ from datetime import datetime
 class UpImage(object):
 
     def __init__(self, id=0, created_on=None, author='', title='', message='',
-                img=None, thumb=None, delkey='', deltime=None, reply_count=0):
+                img=None, thumb=None, delkey='', deltime=None, reply_count=0, last_modified=''):
         self.id = id
         self.created_on = created_on or datetime.now()
         self.author = author
@@ -14,6 +14,7 @@ class UpImage(object):
         self.thumb = thumb
         self.delkey = delkey
         self.deltime = deltime
+        self.last_modified = last_modified or datetime.now()
         self.reply_count = reply_count
 
 

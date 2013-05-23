@@ -343,7 +343,11 @@ class AtomHandler(ViewHandler): #{{{
             feed.add_item(
                 title = i.title or 'タイトルなし',
                 link = '%s/detail/%s' % (base_url, i.id),
-                description = '<img src="%s/img/%s">' % (base_url, i.thumb),
+                description = """<![CDATA[
+                    <a href="%s/detail/%s">
+                      <img src="%s/img/%s" />
+                    </a>
+                ]]>""" % (base_url, i.id, base_url, i.thumb),
                 author_name = i.author or '名無し',
                 pubdate = datetime.now()
             )

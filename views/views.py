@@ -5,6 +5,7 @@ from PIL import Image
 from hashlib import sha1 as sha
 from datetime import datetime
 import time, random
+import feedgenerator
 
 from wheezy.web.handlers import BaseHandler
 from config import DEBUG, session, cached, SELECT_LIMIT, default_cache_profile
@@ -12,7 +13,7 @@ from models.upimage import UpImage, Reply
 from repositories.upimage import Repository
 from validations.upimage import upimage_validator, reply_validator, delete_validator
 from wheezy.caching.memory import MemoryCache
-from wheezy.http import CacheProfile
+from wheezy.http import CacheProfile, HTTPResponse
 from wheezy.http.request import HTTPRequest
 from wheezy.http.transforms import gzip_transform
 from wheezy.web import handler_cache
@@ -194,6 +195,7 @@ class DetailHandler(ViewHandler): #{{{
             return self.get(reply)
 
         cached.dependency.delete('d_detail')
+        cached.dependency.delete('d_list')
         return self.redirect_for('detail', id=reply.parent_id)
 #}}}
 
@@ -278,9 +280,9 @@ class DeleteHandler(ViewHandler): #{{{
             os.remove(os.path.join('contents/static/upload/', obj.thumb))
 
         return True
+#}}}
 
-
-class SoftwareHandler(ViewHandler):
+class SoftwareHandler(ViewHandler): #{{{
 
     @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
@@ -288,9 +290,9 @@ class SoftwareHandler(ViewHandler):
         response = self.render_response('software.mako')
         response.cache_dependency = ('d_software', )
         return response
+#}}}
 
-
-class AboutHandler(ViewHandler):
+class AboutHandler(ViewHandler): #{{{
 
     @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
@@ -298,9 +300,9 @@ class AboutHandler(ViewHandler):
         response = self.render_response('about.mako')
         response.cache_dependency = ('d_about', )
         return response
+#}}}
 
-
-class ContactHandler(ViewHandler):
+class ContactHandler(ViewHandler): #{{{
 
     @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
@@ -308,9 +310,55 @@ class ContactHandler(ViewHandler):
         response = self.render_response('contact.mako')
         response.cache_dependency = ('d_contact', )
         return response
+#}}}
 
+class AtomHandler(ViewHandler): #{{{
 
-class HttpErrorHandler(ViewHandler):
+    #@handler_cache(profile=default_cache_profile)
+    @handler_transforms(gzip_transform(compress_level=7, min_length=250))
+    def get(self):
+        con = session()
+        repo = Repository(con)
+
+        CONTENT_TYPE_XML='text/xml'
+        CONTENT_TYPE_XML_RSP=CONTENT_TYPE_XML+'; charset=utf-8'
+
+        if DEBUG:
+            base_url = 'http://192.168.72.100:8080'
+        else:
+            base_url = 'http://shoboi.net'
+
+        feed = feedgenerator.Atom1Feed(
+            title = 'しょぼいろだ。',
+            link = 'http://shobi.net/',
+            feed_url = 'http://shoboi.net/atom',
+            description = u'エロも笑いも虹も惨事もしょぼいろだで共有してね',
+            author_name=u'しょぼい。',
+            language = u"ja",
+            pubdate = datetime.utcnow()
+        )
+
+        upimages = repo.list_upimages()
+        for idx, i in enumerate(upimages):
+            feed.add_item(
+                title = i.title or 'タイトルなし',
+                link = '%s/detail/%s' % (base_url, i.id),
+                description = '<img src="%s/img/%s">' % (base_url, i.thumb),
+                author_name = i.author or '名無し',
+                pubdate = datetime.now()
+            )
+            if idx >= 3:
+                break;
+
+        response = HTTPResponse()
+        content_type = ('Content-Type', CONTENT_TYPE_XML_RSP)
+        response.headers[0] = content_type
+        response.write(feed.writeString('utf-8'))
+        response.cache_dependency = ('d_atom', )
+        return response
+#}}}
+
+class HttpErrorHandler(ViewHandler): #{{{
 
     @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
@@ -324,7 +372,7 @@ class HttpErrorHandler(ViewHandler):
             response = self.render_response('errors/http404.mako')
             response.cache_dependency = ('d_errors', )
             return response
-
+#}}}
 
 
 

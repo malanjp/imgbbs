@@ -1,7 +1,7 @@
 from wheezy.routing import url
 from wheezy.http import response_cache
 from wheezy.web.handlers import file_handler
-from views.views import ListHandler, DetailHandler, DeleteHandler, SoftwareHandler, AboutHandler, ContactHandler, HttpErrorHandler
+from views.views import ListHandler, DetailHandler, DeleteHandler, SoftwareHandler, AboutHandler, ContactHandler, AtomHandler, HttpErrorHandler
 from datetime import timedelta
 
 
@@ -15,6 +15,7 @@ all_urls = [
     url('software', SoftwareHandler, name='software'),
     url('about', AboutHandler, name='about'),
     url('contact', ContactHandler, name='contact'),
+    url('atom', AtomHandler, name='atom'),
     url('img/{path:any}', file_handler(root='contents/static/upload/'), name='img'),
     url('static/{path:any}', file_handler(root='contents/static/', age=timedelta(hours=1)), name='static'),
 

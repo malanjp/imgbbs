@@ -15,7 +15,11 @@ ${widgets.uploadform('list', obj=upimage)}
       <li class='media'>
         <div class='container'>
           <a href="${path_for('detail', id=i.id)}">
+          %if i.reply_count > 0:
             <div class='title'>${i.title or 'No Title'}（${i.reply_count}）</div>
+          %else:
+            <div class='title'>${i.title or 'No Title'}</div>
+          %endif
             <div class='thumbnail'>
               <img src="${path_for('img', path=i.thumb)}">
             </div>

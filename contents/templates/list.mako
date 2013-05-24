@@ -1,9 +1,6 @@
 <%inherit file="layout.mako"/>
 <%namespace name="widgets" file="widgets.mako"/>
 
-<%def name="sidebar()">
-</%def>
-
 <%def name="body()">
 
 ${widgets.uploadform('list', obj=upimage)}
@@ -15,11 +12,11 @@ ${widgets.uploadform('list', obj=upimage)}
       <li class='media'>
         <div class='container'>
           <a href="${path_for('detail', id=i.id)}">
-          %if i.reply_count is not None and i.reply_count > 0:
-            <div class='title'>${i.title or 'No Title'}（${i.reply_count}）</div>
-          %else:
-            <div class='title'>${i.title or 'No Title'}</div>
-          %endif
+            %if i.reply_count is not None and i.reply_count > 0:
+              <div class='title'>${i.title or '無題'}（${i.reply_count}）</div>
+            %else:
+              <div class='title'>${i.title or '無題'}</div>
+            %endif
             <div class='thumbnail'>
               <img src="${path_for('img', path=i.thumb)}">
             </div>

@@ -90,6 +90,8 @@ input[type=file] {
 }
 
 .detail .title {
+    color:red;
+    font-size:large;
     margin:15px 0;
 }
 .detail .author {

@@ -15,7 +15,7 @@
               ${obj.author.label('名前')}
             </td>
             <td>
-              ${obj.author.textbox('名前', class='input-xlarge')}
+              ${obj.author.textbox('名前', class='input-xlarge', placeholder='最大10文字')}
               ${obj.author.error()}
             </td>
           </tr>
@@ -25,17 +25,21 @@
               ${obj.title.label('タイトル')}
             </td>
             <td>
-              ${obj.title.textbox('', '', class='input-xlarge')}
+              ${obj.title.textbox('', '', class='input-xlarge', placeholder='最大20文字')}
               ${obj.title.error()}
             </td>
           </tr>
           %endif
           <tr>
             <td>
-              ${obj.message.label('コメント')}
+              %if parent_id:
+                ${obj.message.label('コメント', class='required')}
+              %else:
+                ${obj.message.label('コメント')}
+              %endif
             </td>
             <td>
-              ${obj.message.textarea('', '', class='input-xlarge', rows=3)}
+              ${obj.message.textarea('', '', class='input-xlarge', placeholder='最大512文字', rows=3)}
               ${obj.message.error()}
             </td>
           </tr>
@@ -44,7 +48,8 @@
               ${obj.img.label('画像', class='required')} 
             </td>
             <td>
-              <input type='file' id='img' name='img'>
+              ##<input type='file' id='img' name='img'>
+              <input type="file" id='img' name="img[]" multiple>
               ${obj.img.error()}
             </td>
           </tr>
@@ -53,7 +58,7 @@
               ${obj.delkey.label('削除キー')}
             </td>
             <td>
-              ${obj.delkey.textbox()}
+              ${obj.delkey.textbox(placeholder='最大20文字')}
               ${obj.delkey.error()}
             </td>
           </tr>
@@ -75,7 +80,7 @@
       </fieldset>
     </form>
     ${obj.error()}
-    <p class='center'>* JPEG, PNG, GIF で 10MBまで</p>
+    <p class='center'>* JPEG, PNG, GIF で 複数ファイル可能だけど 10MB まで</p>
   </div>
   <div class='span4'></div>
 </div>

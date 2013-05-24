@@ -41,7 +41,20 @@ class Repository(object):
                 INSERT INTO upimage (created_on, author, title, message, img, thumb, delkey, deltime, last_modified)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (upimage.created_on, upimage.author, upimage.title, upimage.message, upimage.img, upimage.thumb, upimage.delkey, upimage.deltime, upimage.last_modified))
-        return True
+        self.db.execute("select * from upimage order by id desc limit 1")
+        row = self.db.fetchone()
+        if not row:
+            return None
+        return UpImage(
+                id=row[0],
+                created_on=row[1],
+                author=row[2],
+                title=row[3],
+                message=row[4],
+                img=row[5],
+                thumb=row[6],
+                deltime=row[7]
+              )
 
     def get_count(self):
         self.db.execute("""
@@ -89,6 +102,20 @@ class Repository(object):
         self.db.execute("""
                 update upimage set upimage.last_modified = now() where id = %s
         """, (reply.parent_id))
+        self.db.execute("select * from reply order by id desc limit 1")
+        row = self.db.fetchone()
+        if not row:
+            return None
+        return Reply(
+                id=row[0],
+                parent_id=[1],
+                created_on=row[2],
+                author=row[3],
+                message=row[4],
+                img=row[5],
+                thumb=row[6],
+                deltime=row[7]
+              )
         return True
 
     def get_replies(self, parent_id):
@@ -168,6 +195,25 @@ class Repository(object):
             """, (upimage.id,))
         self.con.commit()
         return res
+
+    def latest_updates(self):
+        self.db.execute("""
+        select id, created_on, thumb from upimage
+        union all
+        select id, created_on, thumb from reply
+        order by created_on desc
+        limit 5
+        """)
+        return Reply(
+                id=row[0],
+                parent_id=[1],
+                created_on=row[2],
+                author=row[3],
+                message=row[4],
+                img=row[5],
+                thumb=row[6],
+                deltime=row[7] 
+              )
 
     def generate_password(self, key):
         if not key:

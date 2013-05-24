@@ -120,6 +120,7 @@ class ListHandler(ViewHandler): #{{{
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)
 
+        upimage = UpImage()
         if not self.request.files.get('img[]'):
             if (not self.try_update_model(upimage)
                     or not self.validate(upimage, upimage_validator)):

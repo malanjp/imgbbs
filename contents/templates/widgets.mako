@@ -81,6 +81,7 @@
     </form>
     ${obj.error()}
     <p class='center'>* JPEG, PNG, GIF で 複数ファイル可能だけど 10MB まで</p>
+    <hr>
   </div>
   <div class='span4'></div>
 </div>

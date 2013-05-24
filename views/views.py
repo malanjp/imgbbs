@@ -30,17 +30,13 @@ class ViewHandler(BaseHandler): #{{{
         return sha(r.__str__().encode('utf-8') + t.__str__().encode('utf-8')).hexdigest()
         #}}}
 
-    def imgbbs_preprocess(self, upimage=None): #{{{
-        if self.request.files.get('img'):
-            img = self.request.files['img'][0]
+    def imgbbs_preprocess(self, upimage=None, img=None): #{{{
+        if not self.validate_extension(img):
+            return self.get(upimage)
 
-            if not self.validate_extension(img):
-                return self.get(upimage)
-
-            file = img.file
-            (filename, thumbname) = self.save_file(file)
-            upimage.img = filename
-            upimage.thumb = thumbname
+        (filename, thumbname) = self.save_file(img)
+        upimage.img = filename
+        upimage.thumb = thumbname
 
         if self.request.form.get('deltime'):
             upimage.deltime = self.request.form.get('deltime')[0].replace('T', ' ')
@@ -59,9 +55,8 @@ class ViewHandler(BaseHandler): #{{{
         return res
         #}}}
 
-    def save_file(self, fieldstrage=None): #{{{
+    def save_file(self, img=None): #{{{
         filename = self.generate_filename()
-        img = self.request.files['img'][0]
         file = img.file
         ext = img.filename.split('.')[-1]
         thumbname =  filename + '_thumb.' + ext
@@ -95,7 +90,7 @@ class ViewHandler(BaseHandler): #{{{
 
 class ListHandler(ViewHandler): #{{{
 
-    @handler_cache(profile=default_cache_profile)
+    #@handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, upimage=None): #{{{
         page = self.route_args.get('page', 1)
@@ -121,25 +116,43 @@ class ListHandler(ViewHandler): #{{{
         #}}}
 
     def post(self): #{{{
+        print(self.request.environ)
         if not self.validate_xsrf_token():
             return self.redirect_for(self.route_args.route_name)
 
-        upimage = UpImage()
-        upimage = self.imgbbs_preprocess(upimage)
-        if (not self.try_update_model(upimage)
-                or not self.validate(upimage, upimage_validator)):
-            print(self.errors)
-            return self.get(upimage)
+        if not self.request.files.get('img[]'):
+            if (not self.try_update_model(upimage)
+                    or not self.validate(upimage, upimage_validator)):
+                cached.dependency.delete('d_list')
+                return self.get(upimage)
 
-        #if DEBUG:
-        #  for key, i in self.request.form.items():
-        #    print(key, i)
+        count = len(self.request.files['img[]'])
+        for idx, img in enumerate(self.request.files['img[]']):
+            upimage = self.imgbbs_preprocess(upimage, img)
+            if (not self.try_update_model(upimage)
+                    or not self.validate(upimage, upimage_validator)):
+                return self.get(upimage)
 
-        con = session()
-        repo = Repository(con)
-        if not self.add_commit_object(upimage):
-            self.error('Sorry, can not add your image.')
-            return self.get(upimage)
+            con = session()
+            repo = Repository(con)
+
+            # スレ立てる
+            if idx == 0:
+                upimage = self.add_commit_object(upimage)
+                if not upimage:
+                    self.error('Sorry, can not add your image.')
+                    cached.dependency.delete('d_list')
+                    return self.get(upimage)
+                thread_id = upimage.id
+
+            # 画像が複数件あるなら立てたスレにレスの形で残りをうｐ
+            if idx > 0 and count > 1:
+                upimage.parent_id = thread_id
+                if not self.add_commit_object(upimage, mode='reply'):
+                    self.error('Sorry, can not add your image.')
+                    cached.dependency.delete('d_detail')
+                    cached.dependency.delete('d_list')
+                    return self.get(reply)
 
         cached.dependency.delete('d_list')
         return self.see_other_for('list')
@@ -148,7 +161,7 @@ class ListHandler(ViewHandler): #{{{
 
 class DetailHandler(ViewHandler): #{{{
 
-    #@handler_cache(profile=default_cache_profile)
+    @handler_cache(profile=default_cache_profile)
     @handler_transforms(gzip_transform(compress_level=7, min_length=250))
     def get(self, reply=None):
         id = self.route_args.get('id')
@@ -183,16 +196,24 @@ class DetailHandler(ViewHandler): #{{{
             cached.dependency.delete('d_detail')
             return self.get(reply)
 
-        reply = self.imgbbs_preprocess(reply)
+        imgs = self.request.files.get('img[]')
+        if imgs:
+            count = len(imgs)
+            for idx, img in enumerate(imgs):
+                reply = self.imgbbs_preprocess(reply, img)
 
-        if not reply:
-            cached.dependency.delete('d_detail')
-            return self.get(reply)
+                if (not self.try_update_model(reply)
+                        or not self.validate(reply, reply_validator)):
+                    return self.get(reply)
 
-        if not self.add_commit_object(reply, mode='reply'):
-            self.error('Sorry, can not add your image.')
-            cached.dependency.delete('d_detail')
-            return self.get(reply)
+                if not reply:
+                    cached.dependency.delete('d_detail')
+                    return self.get(reply)
+
+                if not self.add_commit_object(reply, mode='reply'):
+                    self.error('Sorry, can not add your image.')
+                    cached.dependency.delete('d_detail')
+                    return self.get(reply)
 
         cached.dependency.delete('d_detail')
         cached.dependency.delete('d_list')
@@ -345,13 +366,13 @@ class AtomHandler(ViewHandler): #{{{
                 link = '%s/detail/%s' % (base_url, i.id),
                 description = """<![CDATA[
                     <a href="%s/detail/%s">
-                      <img src="%s/img/%s" />
+                      <img src="%s/img/%s">
                     </a>
                 ]]>""" % (base_url, i.id, base_url, i.thumb),
                 author_name = i.author or '名無し',
                 pubdate = datetime.now()
             )
-            if idx >= 3:
+            if idx >= 4: # 5件まで
                 break;
 
         response = HTTPResponse()

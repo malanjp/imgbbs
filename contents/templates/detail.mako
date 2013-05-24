@@ -1,8 +1,7 @@
 <%inherit file="layout.mako"/>
 <%namespace name="widgets" file="widgets.mako"/>
 
-<%def name="sidebar()">
-</%def>
+<%def name="title()">${upimage.title or '無題'}</%def>
 
 <%def name="body()">
 ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
@@ -12,7 +11,7 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
   <div class='detail'>
     ## 名前とかタイトルとか
     <div class='author'>
-      <div class='title'>タイトル：${upimage.title or '無題'}</div>
+      <div class='title'>${upimage.title or '無題'}</div>
       <span class='author_id'>No. ${upimage.id} </span>
       名前：<span class='name'>${upimage.author or '名無し'}</span>
       ${upimage.created_on}&nbsp;&nbsp;<a id="pop_modal_${upimage.id}"

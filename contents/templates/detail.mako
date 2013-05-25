@@ -8,6 +8,9 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
 
 <div class='span4'></div>
 <div class='span4'>
+
+  <a href="${path_for('list')}">トップページへ</a>
+
   <div class='detail'>
     ## 名前とかタイトルとか
     <div class='author'>
@@ -97,8 +100,11 @@ ${widgets.uploadform(pathname='reply', obj=reply, parent_id=reply.parent_id)}
         </div>
       </form>
     </div>
+
     <hr>
   %endfor
+
+  <a href="${path_for('list')}">トップページへ</a>
 </div>
 <div class='span4'></div>
 </%def>

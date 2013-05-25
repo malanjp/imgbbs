@@ -5,6 +5,7 @@
 
 ${widgets.uploadform('list', obj=upimage)}
 
+${pagination()}
 <div class='span12'>
   <div class='image-list'>
     %for i in upimages:
@@ -28,7 +29,11 @@ ${widgets.uploadform('list', obj=upimage)}
     %endfor
   </div>
 </div>
+${pagination()}
+</%def>
 
+
+<%def name="pagination()">
 <div>
   <div class="pagination">
     <ul>
@@ -58,7 +63,4 @@ ${widgets.uploadform('list', obj=upimage)}
     </ul>
   </div>
 </div>
-
-
 </%def>
-

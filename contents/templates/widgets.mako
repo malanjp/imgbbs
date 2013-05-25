@@ -45,7 +45,11 @@
           </tr>
           <tr>
             <td>
+            %if parent_id:
+              ${obj.img.label('画像')} 
+            %else:
               ${obj.img.label('画像', class='required')} 
+            %endif
             </td>
             <td>
               ##<input type='file' id='img' name='img'>

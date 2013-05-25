@@ -1,5 +1,5 @@
 <%def name="uploadform(pathname='list', obj=None, parent_id=None)">
-<div class='span12'>
+<div class='span12 hidden-phone'>
   <div class='span4'></div>
   <div class='span4'>
     <p class='center bold'>法に触れなければなんでもどうぞ。</p>

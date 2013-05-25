@@ -6,7 +6,8 @@
 ${widgets.uploadform('list', obj=upimage)}
 
 ${pagination()}
-  <table class='image-list'>
+  ## デスクトップ用
+  <table class='image-list hidden-phone'>
     %for i in upimages:
     %if loop.index % 5 == 0:
     <tr class='media-list'>
@@ -31,6 +32,29 @@ ${pagination()}
     %endif
     %endfor
   </table>
+
+  ## iPhone用
+  <div class='image-list hidden-desktop'>
+    %for i in upimages:
+    <div class='media-list'>
+      <div class='media'>
+        <div class='container'>
+          <a href="${path_for('detail', id=i.id)}">
+            %if i.reply_count is not None and i.reply_count > 0:
+              <div class='title'>${i.title or '無題'}（${i.reply_count}）</div>
+            %else:
+              <div class='title'>${i.title or '無題'}</div>
+            %endif
+            <div class='thumbnail'>
+              <img src="${path_for('img', path=i.thumb)}">
+            </div>
+          </a>
+          <div class='author'>${i.author or '名無し'}</div>
+        </div>
+      </div>
+    </div>
+    %endfor
+  </div>
 ${pagination()}
 </%def>
 

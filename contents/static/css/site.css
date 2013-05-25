@@ -1,20 +1,19 @@
-textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    padding:0;
-}
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    margin-bottom:0;
-}
-select, input[type="file"] {
-    height: 20px;
-}
-
-@media (max-width: 767px) {
-    [class*="span"].pull-right {
-        float: none;
+@media (min-width: 1200px) {
+    textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+        padding:0;
     }
-}
+    select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+        margin-bottom:0;
+    }
+    select, input[type="file"] {
+        height: 20px;
+    }
 
-body {
+    @media (max-width: 767px) {
+        [class*="span"].pull-right {
+            float: none;
+        }
+    }
 }
 .center {
     text-align:center;

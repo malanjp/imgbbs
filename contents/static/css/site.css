@@ -61,11 +61,10 @@ input[type=file] {
     line-height:0
 }
 .image-list {
-    margin-top:20px;
+    margin:20px auto 0 auto;
 }
 .image-list .container {
     width:200px;
-    margin:0px 10px 0px 10px;
 }
 .image-list .title {
     font-weight:bold;
@@ -81,12 +80,11 @@ input[type=file] {
 .image-list .author {
     text-align:center;
 }
-.image-list li.media {
-    height:280px;
-    float:left;
-}
 .media-list {
     margin-left:none;
+}
+td.media {
+    width:240px
 }
 
 .detail .title {

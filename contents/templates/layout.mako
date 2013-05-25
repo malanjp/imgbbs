@@ -62,18 +62,18 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script type="text/javascript" src="${path_for('static', path='uiset/js/bootstrap-modal.js')}"></script>
     <script type="text/javascript" src="${path_for('static', path='js/site.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-transition.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-alert.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-modal.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-dropdown.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-scrollspy.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-tab.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-tooltip.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-popover.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-button.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-collapse.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-carousel.js')}"></script>
-    <script src="${path_for('static', path='uiset/js/bootstrap-typeahead.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-transition.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-alert.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-modal.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-dropdown.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-scrollspy.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-tab.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-tooltip.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-popover.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-button.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-collapse.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-carousel.js')}"></script>
+##    <script src="${path_for('static', path='uiset/js/bootstrap-typeahead.js')}"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>

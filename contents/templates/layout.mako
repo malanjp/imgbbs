@@ -19,7 +19,7 @@
     <link href="${path_for('static', path='uiset/css/bootstrap.min.css')}" rel="stylesheet">
     <!-- Loading Flat UI -->
     <link href="${path_for('static', path='uiset/css/flat-ui.css')}" rel="stylesheet">
-    <link href="${path_for('static', path='uiset/css/bootstrap-responsive.min.css')}" rel="stylesheet">
+##    <link href="${path_for('static', path='uiset/css/bootstrap-responsive.min.css')}" rel="stylesheet">
     <link href="${path_for('static', path='css/site.css')}" type="text/css" rel="stylesheet" />
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>

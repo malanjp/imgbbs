@@ -5,11 +5,13 @@
 
 ${widgets.uploadform('list', obj=upimage)}
 
-<div class='span12'>
-  <div class='image-list'>
+${pagination()}
+  <table class='image-list'>
     %for i in upimages:
-    <ul class='media-list'>
-      <li class='media'>
+    %if loop.index % 5 == 0:
+    <tr class='media-list'>
+    %endif
+      <td class='media'>
         <div class='container'>
           <a href="${path_for('detail', id=i.id)}">
             %if i.reply_count is not None and i.reply_count > 0:
@@ -23,12 +25,17 @@ ${widgets.uploadform('list', obj=upimage)}
           </a>
           <div class='author'>${i.author or '名無し'}</div>
         </div>
-      </li>
-    </ul>
+      </td>
+    %if loop.index % 5 == 4:
+    </tr>
+    %endif
     %endfor
-  </div>
-</div>
+  </table>
+${pagination()}
+</%def>
 
+
+<%def name="pagination()">
 <div>
   <div class="pagination">
     <ul>
@@ -58,7 +65,4 @@ ${widgets.uploadform('list', obj=upimage)}
     </ul>
   </div>
 </div>
-
-
 </%def>
-

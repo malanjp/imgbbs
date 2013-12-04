@@ -22,12 +22,12 @@ spew  = False
 preload_app = True
 daemon = True
 pidfile = '/var/run/gunicorn/imgbbs.pid' # 起動前に/var/run/gunicornを作成する
-if socket.gethostname() == 'ip-172-31-28-89':
-    user  = 'ubuntu'
-    group = 'ubuntu'
-else:
+if socket.gethostbyname(socket.gethostname()) == '192.168.72.100'
     user  = 'mshibata'
     group = 'mshibata'
+else:
+    user  = 'shibata'
+    group = 'shibata'
 #umask = 0002
 
 ## Logging

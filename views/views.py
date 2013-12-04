@@ -58,7 +58,8 @@ class ViewHandler(BaseHandler): #{{{
     def save_file(self, img=None): #{{{
         filename = self.generate_filename()
         file = img.file
-        ext = img.filename.split('.')[-1]
+        ext = img.filename.split('.')[-1].lower()
+        print(ext)
         thumbname =  filename + '_thumb.' + ext
         filename =  filename + '.' + ext
         thumbpath = os.path.join('contents/static/upload/', thumbname)

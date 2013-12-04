@@ -25,7 +25,7 @@ from wheezy.core.collections import defaultdict
 
 # debug flag
 DEBUG = False
-if socket.gethostname() == 'ubuntu':
+if socket.gethostbyname(socket.gethostname()) == '192.168.72.100':
     print('debug mode')
     DEBUG = True
 

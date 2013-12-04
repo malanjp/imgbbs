@@ -5,10 +5,13 @@ from wheezy.web.middleware.errors import http_error_middleware_factory
 from wheezy.http.middleware import http_cache_middleware_factory
 from wheezy.http.config import bootstrap_http_defaults
 
-from config import options
+from config import options, DEBUG
 from urls import all_urls
 import socket
 
+host = 'localhost'
+if DEBUG:
+    host = '0.0.0.0'
 
 main = WSGIApplication(
     middleware=[
@@ -23,9 +26,8 @@ main = WSGIApplication(
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
     try:
-        host = socket.gethostname() 
-        print('Visit http://localhost:8080/')
-        make_server('', 8080, main).serve_forever()
+        print('Visit http://{0}:8080/'.format(host))
+        make_server(host, 8080, main).serve_forever()
     except KeyboardInterrupt:
         pass
     print('\nThanks!')

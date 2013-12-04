@@ -25,13 +25,14 @@ from wheezy.core.collections import defaultdict
 
 # debug flag
 DEBUG = False
-if socket.gethostname() == 'mshibata-vm-ubuntu':
+if socket.gethostname() == 'ubuntu':
+    print('debug mode')
     DEBUG = True
 
 
 def session():
-    if socket.gethostname() == 'mshibata-vm-ubuntu':
-        return pymysql.connect(db='imgbbs', host='192.168.72.100', user='imgbbs', passwd='_WioT.A', charset='utf8')
+    if DEBUG:
+        return pymysql.connect(db='imgbbs', host='localhost', user='imgbbs', passwd='_WioT.A', charset='utf8')
     else:
         return pymysql.connect(db='imgbbs', host='localhost', user='imgbbs', passwd='_WioT.A', charset='utf8')
 
